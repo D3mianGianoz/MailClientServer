@@ -2,23 +2,19 @@ package model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import javafx.beans.property.ListProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
- * @author alberto
+ * @author Alberto Costamagna, Damiano Gianotti
  */
 public class Email {
 
@@ -39,35 +35,37 @@ public class Email {
     }
     
     
-    // Ora Invio email
-    private final ObjectProperty<LocalDate> string = new SimpleObjectProperty<>();
+    // Data Invio email
+    private final ObjectProperty<LocalDate> data = new SimpleObjectProperty<>();
 
-    public LocalDate getString() {
-        return string.get();
+    public LocalDate getData() {
+        return data.get();
     }
 
-    public void setString(LocalDate value) {
-        string.set(value);
+    public void setData(LocalDate value) {
+        data.set(value);
     }
 
-    public ObjectProperty stringProperty() {
-        return string;
+    public ObjectProperty dataProperty() {
+        return data;
     }
     
     
     //Destinatari
-    private final ListProperty<String> destinatari = new SimpleListProperty<>();
+    private ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<String>());
 
-    public ObservableList getDestinatari() {
-        return destinatari.get();
-    }
 
-    public void setDestinatari(ObservableList value) {
-        destinatari.set(value);
-    }
-
-    public ListProperty destinatariProperty() {
+    public ObservableList<String> getDestinatary()
+    {
         return destinatari;
+    }
+    
+    public void setDestinatari(ArrayList<String> d)
+    {
+        for(String s: d)
+        {
+            this.destinatari.add(s);
+        }
     }
     
     
@@ -103,9 +101,35 @@ public class Email {
     public StringProperty testoProperty() {
         return testo;
     }
+    
+    
+    
+    
+    // ID della email
+    private final IntegerProperty id = new SimpleIntegerProperty();
 
-    public Email(String mit, ArrayList<String> dest,String ogg,String tes,LocalDate data) {
-        
+    public int getId() {
+        return id.get();
+    }
+
+    public void setId(int value) {
+        id.set(value);
+    }
+
+    public IntegerProperty idProperty() {
+        return id;
+    }
+    
+    
+    
+    
+    public Email(int id,String mit, ArrayList<String> dest,String ogg,String tes,LocalDate data) {
+        setId(id);
+        setMittente(mit);
+        setDestinatari(dest);
+        setOggetto(ogg);
+        setTesto(tes);
+        setData(data);
     }
     
     
