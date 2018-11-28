@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="476.0" prefWidth="673.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="compose.GUIController">
+   <children>
+      <SplitPane dividerPositions="0.23366834170854273" layoutX="220.0" layoutY="100.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <GridPane AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="6.0">
+                     <children>
+                        <TextArea fx:id="txtDestinatario" GridPane.columnIndex="1" />
+                        <TextArea fx:id="txtOggettoNw" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="A (Destinatario):" GridPane.halignment="CENTER" />
+                        <Label text="Oggetto" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                     </children>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" prefWidth="130.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="78.0" prefWidth="600.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <TextArea fx:id="txtTestoNw" layoutX="8.0" prefHeight="195.0" prefWidth="598.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="30.0" />
+                  <Text fill="#c64040" layoutX="46.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inserisci qui il testo della tua email" AnchorPane.leftAnchor="8.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+                  <Button fx:id="btSendEmail" layoutX="14.0" layoutY="314.0" mnemonicParsing="false" onAction="#sendEmail" text="Invia" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="8.0" />
+                  <Button fx:id="btGoBack" layoutX="598.0" layoutY="314.0" mnemonicParsing="false" onAction="#goBackHome" text="Annula (torna Home)" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="8.0" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
