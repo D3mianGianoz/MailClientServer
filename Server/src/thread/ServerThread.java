@@ -2,8 +2,8 @@ package thread;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.Socket;
+import java.util.ArrayList;
 import server.ServerController;
 
 /**
@@ -17,11 +17,13 @@ public class ServerThread extends Thread {
     private final int NUM_PORTA = 8070;
     private ServerSocket server;
     private ServerController controller;
+    private ArrayList<GestClienThread> clientList;
     
     public ServerThread(ServerController c)
     {
         super();
         this.controller = c;
+        clientList = new ArrayList<>();
     }
     
     
@@ -39,6 +41,17 @@ public class ServerThread extends Thread {
             // Avvio il socket di ascolto sulla porta 8070
             server = new ServerSocket(NUM_PORTA);
             controller.printLog("Server inizializzato correttamente sulla porta: "+NUM_PORTA);
+            
+            // Inizio ad ascoltare per le richieste del client
+            while(true)
+            {
+                // Avvio un nuovo thread per gestire la richiesta dell' utente
+                // e lo aggiungo alla lista di client
+                Socket incoming = server.accept();
+                GestClienThread client = new GestClienThread(incoming,controller,clientList);
+                clientList.add(client);
+                client.start();
+            }
         } catch (IOException ex) {
             controller.printLog("Errore nell' apertura del server sulla porta: "+NUM_PORTA+".\n "+ex.getMessage());
         } 
