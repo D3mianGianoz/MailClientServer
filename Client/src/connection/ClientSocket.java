@@ -5,7 +5,9 @@
  */
 package connection;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -20,7 +22,7 @@ public class ClientSocket {
 
     Socket socket;
 
-    public void gen() {
+    public ClientSocket() {
         try {
             this.socket = new Socket("localhost", 8070);
             System.out.println("Ho aperto il socket verso il server");
@@ -37,8 +39,20 @@ public class ClientSocket {
         }
     }
 
-    public void sendString() {
-        this.gen();
+    public void sendString(String toSend) { //in teoria flush automatico
+        try {
+            OutputStream outputStream = this.socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(outputStream, true);
+            writer.write(toSend);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            this.cls();
+        }
+    }
+
+    //TODO da finire
+    public void sendObject() {
         try {
             OutputStream outputStream = this.socket.getOutputStream();
             PrintWriter writer = new PrintWriter(outputStream, true);
@@ -49,16 +63,16 @@ public class ClientSocket {
         }
     }
     
-    //TODO da finire
-    public void sendObject() {
-        this.gen();
+    public String readString(){
         try {
-            OutputStream outputStream = this.socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(outputStream, true);
+            InputStreamReader inputStreamR;
+            inputStreamR = new InputStreamReader(this.socket.getInputStream());
+            BufferedReader reader = new BufferedReader(inputStreamR);
+            String readLine = reader.readLine();
+            return readLine;
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            this.cls();
         }
+        return "Error in readString";
     }
 }
