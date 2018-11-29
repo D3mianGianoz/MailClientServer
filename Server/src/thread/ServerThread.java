@@ -31,7 +31,7 @@ public class ServerThread extends Thread {
     @Override
     public void run()
     {
-        startServer();        
+        startServer();
     }
     
     
@@ -40,21 +40,28 @@ public class ServerThread extends Thread {
         try {
             // Avvio il socket di ascolto sulla porta 8070
             server = new ServerSocket(NUM_PORTA);
-            controller.printLog("Server inizializzato correttamente sulla porta: "+NUM_PORTA);
-            
-            // Inizio ad ascoltare per le richieste del client
-            while(true)
-            {
-                // Avvio un nuovo thread per gestire la richiesta dell' utente
-                // e lo aggiungo alla lista di client
-                Socket incoming = server.accept();
-                GestClienThread client = new GestClienThread(incoming,controller,clientList);
-                clientList.add(client);
-                client.start();
+        }
+        catch (IOException ex) {
+            controller.printLog("Errore nell' apertura del server sulla porta: "+NUM_PORTA+". "+ex.getMessage());
+        }
+        controller.printLog("Server inizializzato correttamente sulla porta: "+NUM_PORTA);
+        
+        // Inizio ad ascoltare per le richieste del client
+        while(true)
+        {
+            // Avvio un nuovo thread per gestire la richiesta dell' utente
+            // e lo aggiungo alla lista di client
+            Socket incoming = null;
+            try {
+                incoming = server.accept();
+            } catch (IOException ex) {
+                controller.printLog("Errore nella ricezione della richiesta di un client: "+ex.getMessage());
             }
-        } catch (IOException ex) {
-            controller.printLog("Errore nell' apertura del server sulla porta: "+NUM_PORTA+".\n "+ex.getMessage());
-        } 
+            GestClienThread client = new GestClienThread(incoming,controller,clientList);
+            clientList.add(client);
+            client.start();
+        }
+        
     }
     
     public void stopServer()
@@ -63,7 +70,7 @@ public class ServerThread extends Thread {
             server.close();
             controller.printLog("Server chiusto correttamente");
         } catch (IOException ex) {
-            controller.printLog("Errore nella chiusura del server sulla porta: "+NUM_PORTA+".\n "+ex.getMessage());
+            controller.printLog("Errore nella chiusura del server sulla porta: "+NUM_PORTA+". "+ex.getMessage());
         }
     }
     
