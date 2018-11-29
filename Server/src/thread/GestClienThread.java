@@ -31,18 +31,19 @@ public class GestClienThread extends Thread {
         this.socket = r;
         this.controller = c;
         this.clientList = clients;
-        // Creo l' oggetto per rispondere al client
-        try {
-            out = new ObjectOutputStream(socket.getOutputStream());
-        } catch (IOException ex) {
-            controller.printLog("Errore nella creazione dell' output stream");
-        }
         // Creo l' oggetto per leggere la richiesta del client
         try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' input stream");
         }
+        // Creo l' oggetto per rispondere al client
+        try {
+            out = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            controller.printLog("Errore nella creazione dell' output stream");
+        }
+       
         
     }
     
@@ -70,14 +71,11 @@ public class GestClienThread extends Thread {
                 // Esco e blocco il ciclo infinito
                 case "exit":
                     return;
-                    
-                    
             }
-            
         }
-        
-        
     }
+    
+    
     
     private void gestsciLogin()
     {
