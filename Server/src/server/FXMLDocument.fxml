@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="796.0" prefWidth="1027.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="server.ServerController">
+   <children>
+      <Label layoutX="382.0" layoutY="14.0" text="SERVER EMAIL">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnAvvia" layoutX="341.0" layoutY="71.0" mnemonicParsing="false" onAction="#startServer" prefHeight="59.0" prefWidth="144.0" text="AVVIA">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnStop" layoutX="524.0" layoutY="71.0" mnemonicParsing="false" onAction="#stopServer" prefHeight="59.0" prefWidth="144.0" text="STOP">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+      <TextArea fx:id="txtLog" editable="false" layoutX="14.0" layoutY="150.0" prefHeight="624.0" prefWidth="998.0" />
+      <Label fx:id="lblStatus" layoutX="718.0" layoutY="93.0" prefHeight="20.0" prefWidth="186.0" textAlignment="CENTER">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
