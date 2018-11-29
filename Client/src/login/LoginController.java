@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import client.Client;
+import connection.ClientSocket;
 import javafx.scene.control.Button;
 import javax.swing.JOptionPane;
 
@@ -22,6 +23,8 @@ import javax.swing.JOptionPane;
  */
 public class LoginController implements Initializable {
 
+    private ClientSocket clsocket;
+
     @FXML
     private TextField txtMail;
     @FXML
@@ -29,16 +32,30 @@ public class LoginController implements Initializable {
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        if (txtMail.getText().equals("#")) {
-            alert("Login Effettuato", "Success");
-            Client.showEmailClient();
+        clsocket = new ClientSocket();
+        clsocket.sendString("login");
+        String readString = clsocket.readString();
+        
+        if (readString.equals("OK LOGIN")) {
+            
+            clsocket.sendString(txtMail.getText());
+            String connessione = clsocket.readString();
+            if (connessione.equals("connesso")) {
+                alert("Login Effettuato", "Success");
+                Client.showEmailClient();
+            } else {
+                alert("Errore nel login..", "Errore, please retry");
+            }
         } else {
-            alert("Errore nel login..", "Errore, please retry");
+            alert("Errore nella connessione","problema con il server");
         }
     }
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
