@@ -16,7 +16,7 @@ public class ServerThread extends Thread {
     
     private final int NUM_PORTA = 8070;
     private ServerSocket server;
-    private ServerController controller;
+    private final ServerController controller;
     private ArrayList<GestClienThread> clientList;
     private boolean exit = false;
     
@@ -52,13 +52,12 @@ public class ServerThread extends Thread {
         {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
-            controller.printLog("Sto aspettando una connesione...");
             
             try {                
                 GestClienThread client = new GestClienThread(server.accept(),controller,clientList);
                 clientList.add(client);
                 client.start();
-                controller.printLog("Connessione iniziata...");
+            
             } catch (IOException ex) {
                 controller.printLog("Errore nella ricezione della richiesta di un client: "+ex.getMessage());
             }
@@ -66,6 +65,8 @@ public class ServerThread extends Thread {
         
     }
     
+    
+    // TODO si blocca quando clicco sul bottone di stop, da un errore di array out of bound
     public void stopServer()
     {
         try {

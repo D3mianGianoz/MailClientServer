@@ -59,23 +59,22 @@ public class ClientSocket {
     }
 
     //TODO da finire
-    public void sendObject() {
+    public void sendObject(Object obj) {
         try {
-          out.writeObject("login");
+          out.writeObject(obj);
              
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
     
-    public String readString(){
+    public String readObjectString(){
         try {
-            InputStreamReader inputStreamR;
-            inputStreamR = new InputStreamReader(this.socket.getInputStream());
-            BufferedReader reader = new BufferedReader(inputStreamR);
-            String readLine = reader.readLine();
-            return readLine;
+            String ret = (String)in.readObject();
+            return ret;
         } catch (IOException ex) {
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "Error in readString";

@@ -18,7 +18,7 @@ import server.ServerController;
 public class GestClienThread extends Thread {
     
     private Socket socket;
-    private ServerController controller;    
+    private ServerController controller;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private String emailClient;
@@ -32,10 +32,10 @@ public class GestClienThread extends Thread {
         this.socket = r;
         this.controller = c;
         this.clientList = clients;
-         try {
+        try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-             controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
+            controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
         }
         
         try {
@@ -46,35 +46,68 @@ public class GestClienThread extends Thread {
     }
     
     /*
-        Versione FORSE SBAGLIATA
+    Versione FORSE SBAGLIATA
     @Override
     public void run()
     {
-        // Creo l' oggetto per leggere la richiesta del client
-        try {
-            in = new ObjectInputStream(socket.getInputStream());
-        } catch (IOException ex) {
-            controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
-        }
-        // Creo l' oggetto per rispondere al client
-        try {
-            outStream = socket.getOutputStream();
-        } catch (IOException ex) {
-            controller.printLog("Errore nella creazione dell' output stream");
-        }
-        
-        out = new PrintWriter(outStream,true);
+    // Creo l' oggetto per leggere la richiesta del client
+    try {
+    in = new ObjectInputStream(socket.getInputStream());
+    } catch (IOException ex) {
+    controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
+    }
+    // Creo l' oggetto per rispondere al client
+    try {
+    outStream = socket.getOutputStream();
+    } catch (IOException ex) {
+    controller.printLog("Errore nella creazione dell' output stream");
+    }
+    
+    out = new PrintWriter(outStream,true);
+    
+    while(true)
+    {
+    String richiesta = "";
+    
+    // Leggo la richiesta del client
+    try {
+    richiesta = in.readUTF();
+    } catch (IOException ex) {
+    controller.printLog(ex.getMessage());
+    }
+    
+    // Controllo che tipo di richiesta ha fatto il client
+    switch(richiesta)
+    {
+    case "login":
+    gestsciLogin();
+    break;
+    
+    // Esco e blocco il ciclo infinito
+    case "exit":
+    return;
+    }
+    }
+    }
+    */
+    
+    // VERSIONE DI PROVA
+    @Override
+    public void run()
+    {
         
         while(true)
         {
             String richiesta = "";
-            
-            // Leggo la richiesta del client
             try {
-                richiesta = in.readUTF();
+                richiesta = (String)in.readObject();
             } catch (IOException ex) {
-                controller.printLog(ex.getMessage());
+                controller.printLog("Errore nella ricezione della stringa di richiesta dal client");
+            } catch (ClassNotFoundException ex) {
+                controller.printLog("Class not found "+ex.getMessage());
             }
+            
+            //controller.printLog("Lettura stringa del client: "+ richiesta);
             
             // Controllo che tipo di richiesta ha fatto il client
             switch(richiesta)
@@ -88,24 +121,6 @@ public class GestClienThread extends Thread {
                     return;
             }
         }
-    }
-    */
-    
-    // VERSIONE DI PROVA
-    @Override
-    public void run()
-    {
-       
-        String richiesta = "";
-        try {
-            richiesta = (String)in.readObject();
-        } catch (IOException ex) {
-            controller.printLog("Errore nella ricezione della stringa di richiesta dal client");
-        } catch (ClassNotFoundException ex) {
-            controller.printLog("Class not found "+ex.getMessage());
-        }
-        
-        controller.printLog("Lettura stringa del client: "+ richiesta);
         
         
     }
@@ -114,19 +129,26 @@ public class GestClienThread extends Thread {
     private void gestsciLogin()
     {
         // Scrivo al client che accetto la sua richiesta di login
+        controller.printLog("Sto gestendo la richiesta di login da parte del client");
         
-        
-       
-       
-        
-        // Aspetto che il client mi comunichi la sua email
-        // Leggo la richiesta del client e la salvo per il thread corrente
         try {
-            emailClient = in.readUTF();
+            // Comunico al client di mandarmi la sua email
+            out.writeObject("ACK login");
         } catch (IOException ex) {
+            controller.printLog("Impossibile mandare ACK al client");
+        }
+        
+        try {
+            // Leggo la mail del client
+
+            this.emailClient = (String)in.readObject();
+        } catch (IOException ex) {
+            controller.printLog("Impossibile leggere email di login del client");
+        } catch (ClassNotFoundException ex) {
             controller.printLog(ex.getMessage());
         }
         
+        /*
         // Controllo se la mail del client è nuova o il suo file con le email precedenti esiste
         File f = new File("./EmailFiles/"+emailClient+".txt");
         if (!f.exists())
@@ -139,12 +161,14 @@ public class GestClienThread extends Thread {
             }
             controller.printLog("File per l'utente: "+this.emailClient+" crato correttamente");
         }
-        
-        
-        
-        
+        */
+        try {
+            out.writeObject("ACK email login");
+        } catch (IOException ex) {
+            controller.printLog("Errore ack email login");
+        }
         controller.printLog("Client "+this.emailClient+" connesso");
-        
+
         
         
         

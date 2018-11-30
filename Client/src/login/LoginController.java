@@ -33,7 +33,28 @@ public class LoginController implements Initializable {
     @FXML
     private void handleLogin(ActionEvent event) {
         clsocket = new ClientSocket();
-        clsocket.sendObject();
+        
+        // Cominico al server la richiesta login
+        clsocket.sendObject("login");
+        
+        //Aspetto l'ack da parte del server
+        String ret = clsocket.readObjectString();
+        
+        if (ret.equals("ACK login"))
+        {
+            System.out.println(ret);
+            // Mando la mail al server
+            clsocket.sendObject(txtMail.getText());
+            
+            String ack = clsocket.readObjectString();
+            if (ack.equals("ACK email login"))
+                alert("Login effettuato", "login");
+            else
+                alert("errore login","errore");
+        }
+        else
+            System.out.println("Errore nella rispota del login al server");
+        
         
         /*
         String readString = clsocket.readString();
