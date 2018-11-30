@@ -8,6 +8,8 @@ package connection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -20,12 +22,17 @@ import java.util.logging.Logger;
  */
 public class ClientSocket {
 
-    Socket socket;
+    private Socket socket;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     public ClientSocket() {
         try {
-            this.socket = new Socket("localhost", 8070);
+            this.socket = new Socket("127.0.0.1", 8070);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in =  new ObjectInputStream(socket.getInputStream());
             System.out.println("Ho aperto il socket verso il server");
+            
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -43,7 +50,7 @@ public class ClientSocket {
         try {
             OutputStream outputStream = this.socket.getOutputStream();
             PrintWriter writer = new PrintWriter(outputStream, true);
-            writer.write(toSend);
+            writer.println(toSend);
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -54,13 +61,11 @@ public class ClientSocket {
     //TODO da finire
     public void sendObject() {
         try {
-            OutputStream outputStream = this.socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(outputStream, true);
+          out.writeObject("login");
+             
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            this.cls();
-        }
+        } 
     }
     
     public String readString(){

@@ -33,7 +33,9 @@ public class LoginController implements Initializable {
     @FXML
     private void handleLogin(ActionEvent event) {
         clsocket = new ClientSocket();
-        clsocket.sendString("login");
+        clsocket.sendObject();
+        
+        /*
         String readString = clsocket.readString();
         
         if (readString.equals("OK LOGIN")) {
@@ -49,6 +51,7 @@ public class LoginController implements Initializable {
         } else {
             alert("Errore nella connessione","problema con il server");
         }
+        */
     }
 
     /**

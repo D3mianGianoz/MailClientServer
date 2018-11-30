@@ -49,9 +49,9 @@ public class ServerController implements Initializable {
     {
         this.printLog("Stopping server...");
         server.stopServer();
-        lblStatus.setText("Server is not running");
-      
+        lblStatus.setText("Server is not running");      
     }
+    
     
     // Metodo per il popup di un alert box
     public void alert(String messaggio,String titolo)

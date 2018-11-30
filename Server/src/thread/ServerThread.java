@@ -18,6 +18,7 @@ public class ServerThread extends Thread {
     private ServerSocket server;
     private ServerController controller;
     private ArrayList<GestClienThread> clientList;
+    private boolean exit = false;
     
     public ServerThread(ServerController c)
     {
@@ -47,19 +48,20 @@ public class ServerThread extends Thread {
         controller.printLog("Server inizializzato correttamente sulla porta: "+NUM_PORTA);
         
         // Inizio ad ascoltare per le richieste del client
-        while(true)
+        while(!exit)
         {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
-            Socket incoming = null;
-            try {
-                incoming = server.accept();
+            controller.printLog("Sto aspettando una connesione...");
+            
+            try {                
+                GestClienThread client = new GestClienThread(server.accept(),controller,clientList);
+                clientList.add(client);
+                client.start();
+                controller.printLog("Connessione iniziata...");
             } catch (IOException ex) {
                 controller.printLog("Errore nella ricezione della richiesta di un client: "+ex.getMessage());
             }
-            GestClienThread client = new GestClienThread(incoming,controller,clientList);
-            clientList.add(client);
-            client.start();
         }
         
     }
@@ -67,6 +69,7 @@ public class ServerThread extends Thread {
     public void stopServer()
     {
         try {
+            exit = true;
             server.close();
             controller.printLog("Server chiusto correttamente");
         } catch (IOException ex) {
