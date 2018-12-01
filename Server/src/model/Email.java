@@ -46,7 +46,7 @@ public class Email {
         data.set(value);
     }
 
-    public ObjectProperty dataProperty() {
+    public ObjectProperty<LocalDate> dataProperty() {
         return data;
     }
     

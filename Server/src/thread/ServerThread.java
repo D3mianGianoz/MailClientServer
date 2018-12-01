@@ -2,7 +2,6 @@ package thread;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,14 +16,14 @@ public class ServerThread extends Thread {
 
     private final int NUM_PORTA = 8070;
     private ServerSocket server;
-    private final ServerController controller;
-    private ArrayList<GestClienThread> clientList;
+    private ServerController controller;
+    public static ArrayList<GestClienThread> socketList;
     private boolean exit = false;
 
     public ServerThread(ServerController c) {
         super();
         this.controller = c;
-        clientList = new ArrayList<>();
+        socketList = new ArrayList<>();
     }
 
     // Metodo richiamato una volta startato il thread
@@ -37,6 +36,8 @@ public class ServerThread extends Thread {
         try {
             // Avvio il socket di ascolto sulla porta 8070
             server = new ServerSocket(NUM_PORTA);
+            // Se voglio far ripartire il server questa deve essere false !!
+            exit = false;
         } catch (IOException ex) {
             controller.printLog("Errore nell' apertura del server sulla porta: " + NUM_PORTA + ". " + ex.getMessage());
         }
@@ -47,8 +48,8 @@ public class ServerThread extends Thread {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
             try {
-                GestClienThread client = new GestClienThread(server.accept(), controller, clientList);
-                clientList.add(client);
+                GestClienThread client = new GestClienThread(server.accept(), controller);
+                socketList.add(client);
                 client.start();
             } catch (IOException ex) {  //Test
                 controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import server.ServerController;
+import static thread.ServerThread.socketList;
 
 /**
  *
@@ -20,13 +20,13 @@ public class GestClienThread extends Thread {
     private String emailClient;
     // Lista dei client connessi in quel momento
     // Invio la mail tramite il socket solo ai client connessi, altrimento scrivo solo sul loro file
-    private ArrayList<GestClienThread> clientList;
+    //private ArrayList<GestClienThread> clientList;
 
-    public GestClienThread(Socket r, ServerController c, ArrayList<GestClienThread> clients) {
+    public GestClienThread(Socket r, ServerController c) {
         super("ThreadGestioneClient");
         this.socket = r;
         this.controller = c;
-        this.clientList = clients;
+        //this.clientList = clients;
         try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
@@ -61,9 +61,10 @@ public class GestClienThread extends Thread {
                     gestsciLogin();
                     break;
 
-                // Esco e blocco il ciclo infinito
+                // Esco e blocco il ciclo infinito e mi rimuvo dalla lista 
                 case "exit":
                     controller.printLog("Client: "+ this.emailClient +" gestito correttamente, disconesso");
+                    socketList.remove(this);
                     return;
             }
         }
