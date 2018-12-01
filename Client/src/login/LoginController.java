@@ -33,46 +33,29 @@ public class LoginController implements Initializable {
     @FXML
     private void handleLogin(ActionEvent event) {
         clsocket = new ClientSocket();
-        
+
         // Cominico al server la richiesta login
         clsocket.sendObject("login");
-        
+
         //Aspetto l'ack da parte del server
         String ret = clsocket.readObjectString();
-        
-        if (ret.equals("ACK login"))
-        {
+
+        if (ret.equals("ACK login")) {
             System.out.println(ret);
             // Mando la mail al server
             clsocket.sendObject(txtMail.getText());
-            
+
             String ack = clsocket.readObjectString();
-            if (ack.equals("ACK email login"))
+            if (ack.equals("ACK email login")) {
                 alert("Login effettuato", "login");
-            else
-                alert("errore login","errore");
-        }
-        else
-            System.out.println("Errore nella rispota del login al server");
-        
-        
-        /*
-        String readString = clsocket.readString();
-        
-        if (readString.equals("OK LOGIN")) {
-            
-            clsocket.sendString(txtMail.getText());
-            String connessione = clsocket.readString();
-            if (connessione.equals("connesso")) {
-                alert("Login Effettuato", "Success");
                 Client.showEmailClient();
             } else {
-                alert("Errore nel login..", "Errore, please retry");
+                alert("errore login", "errore");
             }
         } else {
-            alert("Errore nella connessione","problema con il server");
+            System.out.println("Errore nella rispota del login al server");
         }
-        */
+
     }
 
     /**
@@ -93,3 +76,21 @@ public class LoginController implements Initializable {
     }
 
 }
+
+    /*
+    String readString = clsocket.readString();
+
+    if (readString.equals("OK LOGIN")) {
+
+        clsocket.sendString(txtMail.getText());
+        String connessione = clsocket.readString();
+        if (connessione.equals("connesso")) {
+            alert("Login Effettuato", "Success");
+            Client.showEmailClient();
+        } else {
+            alert("Errore nel login..", "Errore, please retry");
+        }
+    } else {
+        alert("Errore nella connessione","problema con il server");
+    }
+     */

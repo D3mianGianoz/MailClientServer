@@ -39,7 +39,7 @@ public class ServerController implements Initializable {
     // Inizializza il serverMail mettendo in ascolto il socket sulla porta indicata dal txtPorta
     public void startServer()
     {
-        server = new ServerThread(this);
+        server = new ServerThread(this);                           //TODO Passi sempre lo stesso servercontroller
         this.printLog("Inizializzazione del server...");
         server.start();
         lblStatus.setText("Server is running");

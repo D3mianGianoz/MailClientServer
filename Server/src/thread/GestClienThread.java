@@ -1,14 +1,10 @@
 package thread;
 
-
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import server.ServerController;
 
 /**
@@ -16,7 +12,7 @@ import server.ServerController;
  * @author alberto
  */
 public class GestClienThread extends Thread {
-    
+
     private Socket socket;
     private ServerController controller;
     private ObjectInputStream in;
@@ -25,9 +21,8 @@ public class GestClienThread extends Thread {
     // Lista dei client connessi in quel momento
     // Invio la mail tramite il socket solo ai client connessi, altrimento scrivo solo sul loro file
     private ArrayList<GestClienThread> clientList;
-    
-    public GestClienThread(Socket r,ServerController c,ArrayList clients)
-    {
+
+    public GestClienThread(Socket r, ServerController c, ArrayList clients) {
         super("ThreadGestioneClient");
         this.socket = r;
         this.controller = c;
@@ -37,14 +32,94 @@ public class GestClienThread extends Thread {
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
         }
-        
+
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' output stream " + ex.getMessage());
         }
     }
-    
+
+    // VERSIONE DI PROVA
+    @Override
+    public void run() {
+
+        while (true) {
+            String richiesta = "";
+            try {
+                richiesta = (String) in.readObject();
+            } catch (IOException ex) {
+                controller.printLog("Errore nella ricezione della stringa di richiesta dal client");
+            } catch (ClassNotFoundException ex) {
+                controller.printLog("Class not found " + ex.getMessage());
+            }
+
+            //controller.printLog("Lettura stringa del client: "+ richiesta);
+            // Controllo che tipo di richiesta ha fatto il client
+            switch (richiesta) {
+                case "login":
+                    gestsciLogin();
+                    break;
+
+                // Esco e blocco il ciclo infinito
+                case "exit":
+                    return;
+            }
+        }
+
+    }
+
+    private void gestsciLogin() {
+        // Scrivo al client che accetto la sua richiesta di login
+        controller.printLog("Sto gestendo la richiesta di login da parte del client");
+
+        try {
+            // Comunico al client di mandarmi la sua email
+            out.writeObject("ACK login");
+        } catch (IOException ex) {
+            controller.printLog("Impossibile mandare ACK al client");
+        }
+
+        try {
+            // Leggo la mail del client
+            this.emailClient = (String) in.readObject();
+        } catch (IOException ex) {
+            controller.printLog("Impossibile leggere email di login del client");
+        } catch (ClassNotFoundException ex) {
+            controller.printLog(ex.getMessage());
+        }
+
+        /*
+        // Controllo se la mail del client è nuova o il suo file con le email precedenti esiste
+        File f = new File("./EmailFiles/"+emailClient+".txt");
+        if (!f.exists())
+        {
+            try {
+                // Creo il file per il client
+                f.createNewFile();
+            } catch (IOException ex) {
+                controller.printLog("Errore nella creazione del file per le email dell' utente");
+            }
+            controller.printLog("File per l'utente: "+this.emailClient+" crato correttamente");
+        }
+         */
+        try {
+            out.writeObject("ACK email login");
+        } catch (IOException ex) {
+            controller.printLog("Errore ack email login");
+        }
+        controller.printLog("Client " + this.emailClient + " connesso");
+
+    }
+
+    public String getEmailFromSocket() {
+        return this.emailClient;
+    }
+
+}
+
+
+
     /*
     Versione FORSE SBAGLIATA
     @Override
@@ -89,94 +164,4 @@ public class GestClienThread extends Thread {
     }
     }
     }
-    */
-    
-    // VERSIONE DI PROVA
-    @Override
-    public void run()
-    {
-        
-        while(true)
-        {
-            String richiesta = "";
-            try {
-                richiesta = (String)in.readObject();
-            } catch (IOException ex) {
-                controller.printLog("Errore nella ricezione della stringa di richiesta dal client");
-            } catch (ClassNotFoundException ex) {
-                controller.printLog("Class not found "+ex.getMessage());
-            }
-            
-            //controller.printLog("Lettura stringa del client: "+ richiesta);
-            
-            // Controllo che tipo di richiesta ha fatto il client
-            switch(richiesta)
-            {
-                case "login":
-                    gestsciLogin();
-                    break;
-                    
-                    // Esco e blocco il ciclo infinito
-                case "exit":
-                    return;
-            }
-        }
-        
-        
-    }
-    
-    
-    private void gestsciLogin()
-    {
-        // Scrivo al client che accetto la sua richiesta di login
-        controller.printLog("Sto gestendo la richiesta di login da parte del client");
-        
-        try {
-            // Comunico al client di mandarmi la sua email
-            out.writeObject("ACK login");
-        } catch (IOException ex) {
-            controller.printLog("Impossibile mandare ACK al client");
-        }
-        
-        try {
-            // Leggo la mail del client
-
-            this.emailClient = (String)in.readObject();
-        } catch (IOException ex) {
-            controller.printLog("Impossibile leggere email di login del client");
-        } catch (ClassNotFoundException ex) {
-            controller.printLog(ex.getMessage());
-        }
-        
-        /*
-        // Controllo se la mail del client è nuova o il suo file con le email precedenti esiste
-        File f = new File("./EmailFiles/"+emailClient+".txt");
-        if (!f.exists())
-        {
-            try {
-                // Creo il file per il client
-                f.createNewFile();
-            } catch (IOException ex) {
-                controller.printLog("Errore nella creazione del file per le email dell' utente");
-            }
-            controller.printLog("File per l'utente: "+this.emailClient+" crato correttamente");
-        }
-        */
-        try {
-            out.writeObject("ACK email login");
-        } catch (IOException ex) {
-            controller.printLog("Errore ack email login");
-        }
-        controller.printLog("Client "+this.emailClient+" connesso");
-
-        
-        
-        
-    }
-    
-    public String getEmailFromSocket()
-    {
-        return this.emailClient;
-    }
-    
-}
+     */

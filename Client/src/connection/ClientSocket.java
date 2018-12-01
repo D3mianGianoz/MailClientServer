@@ -5,9 +5,7 @@
  */
 package connection;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -62,7 +60,6 @@ public class ClientSocket {
     public void sendObject(Object obj) {
         try {
           out.writeObject(obj);
-             
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
         } 

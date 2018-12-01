@@ -28,7 +28,7 @@ public class Client extends Application {
     private static Stage primaryStage;
     private static Stage secondaryStage;
     private static AnchorPane mainLayout;
-    private ClientSocket clsocket; //TODO
+    private ClientSocket clsocket;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -36,7 +36,7 @@ public class Client extends Application {
         Client.primaryStage.setTitle("Effetua il Login! ");
         showLoginView();
         
-        //Se chiudo il client chiudo tutto
+        //Se chiudo il client chiudo tutto anche il socket
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override 
             public void handle(WindowEvent event) {
