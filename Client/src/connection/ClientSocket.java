@@ -29,18 +29,18 @@ public class ClientSocket {
             this.socket = new Socket("127.0.0.1", 8070);
             out = new ObjectOutputStream(socket.getOutputStream());
             in =  new ObjectInputStream(socket.getInputStream());
-            System.out.println("Ho aperto il socket verso il server");
-            
+            System.out.println("Ho aperto il socket verso il server");      
         } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Connesione al socket fallita", ex); 
         }
     }
 
     public void cls() {
         try {
+            this.sendObject("exit");
             this.socket.close();
         } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Chiusura socket fallita", ex);
         }
     }
 
@@ -51,8 +51,6 @@ public class ClientSocket {
             writer.println(toSend);
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            this.cls();
         }
     }
 
@@ -60,8 +58,9 @@ public class ClientSocket {
     public void sendObject(Object obj) {
         try {
           out.writeObject(obj);
+          out.flush();
         } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallito invio di: " + obj.getClass(), ex);
         } 
     }
     
@@ -69,10 +68,8 @@ public class ClientSocket {
         try {
             String ret = (String)in.readObject();
             return ret;
-        } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallita ricezione" , ex);
         }
         return "Error in readString";
     }

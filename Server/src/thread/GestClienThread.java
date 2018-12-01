@@ -22,7 +22,7 @@ public class GestClienThread extends Thread {
     // Invio la mail tramite il socket solo ai client connessi, altrimento scrivo solo sul loro file
     private ArrayList<GestClienThread> clientList;
 
-    public GestClienThread(Socket r, ServerController c, ArrayList clients) {
+    public GestClienThread(Socket r, ServerController c, ArrayList<GestClienThread> clients) {
         super("ThreadGestioneClient");
         this.socket = r;
         this.controller = c;
@@ -32,7 +32,7 @@ public class GestClienThread extends Thread {
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
         }
-
+        
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
@@ -63,6 +63,7 @@ public class GestClienThread extends Thread {
 
                 // Esco e blocco il ciclo infinito
                 case "exit":
+                    controller.printLog("Client: "+ this.emailClient +" gestito correttamente, disconesso");
                     return;
             }
         }
@@ -76,12 +77,13 @@ public class GestClienThread extends Thread {
         try {
             // Comunico al client di mandarmi la sua email
             out.writeObject("ACK login");
+            out.flush();
         } catch (IOException ex) {
             controller.printLog("Impossibile mandare ACK al client");
         }
 
         try {
-            // Leggo la mail del client
+            // Leggo la email del client di login
             this.emailClient = (String) in.readObject();
         } catch (IOException ex) {
             controller.printLog("Impossibile leggere email di login del client");
@@ -105,6 +107,7 @@ public class GestClienThread extends Thread {
          */
         try {
             out.writeObject("ACK email login");
+            out.flush();
         } catch (IOException ex) {
             controller.printLog("Errore ack email login");
         }

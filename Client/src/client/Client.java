@@ -28,38 +28,40 @@ public class Client extends Application {
     private static Stage primaryStage;
     private static Stage secondaryStage;
     private static AnchorPane mainLayout;
-    private ClientSocket clsocket;
+    private static ClientSocket clsocket;
+
+    public static ClientSocket getClsocket() {
+        return clsocket;
+    }
+
+    public static void setClsocket(ClientSocket clsocket) {
+        Client.clsocket = clsocket;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
-        Client.primaryStage = stage;
-        Client.primaryStage.setTitle("Effetua il Login! ");
+        primaryStage = stage;
+        primaryStage.setTitle("Effetua il Login! ");
         showLoginView();
         
         //Se chiudo il client chiudo tutto anche il socket
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override 
             public void handle(WindowEvent event) {
+                clsocket.cls();
                 Platform.exit();
                 System.exit(0);
             }
         });
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
+    
     protected static void showLoginView() {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("/login/Login.fxml"));
         try {
             mainLayout = loader.load();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "load del layout Login", ex);
         }
         Scene scene = new Scene(mainLayout);
         primaryStage.setScene(scene);
@@ -76,7 +78,7 @@ public class Client extends Application {
             primaryStage.setTitle("Client Email di ?");
             primaryStage.setScene(sceneEm);
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "load del layout Principale", ex);
         }
     }
 
@@ -92,8 +94,15 @@ public class Client extends Application {
             secondaryStage.setScene(sceneEm);
             secondaryStage.show();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "load del layout ComposeEmail", ex);
         }
+    }
+
+        /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
     }
 
 }

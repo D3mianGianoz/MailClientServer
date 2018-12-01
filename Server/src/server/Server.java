@@ -1,11 +1,13 @@
 package server;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import thread.ServerThread;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -22,7 +24,14 @@ public class Server extends Application {
         stage.setScene(scene);
         stage.show();
         
-       
+        //Se chiudo il server chiudo tutto //TODO assiucurarsi che chiuda anche il socket
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override 
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
     }
     
 

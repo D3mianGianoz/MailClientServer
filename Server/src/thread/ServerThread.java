@@ -46,30 +46,27 @@ public class ServerThread extends Thread {
         while (!exit) {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
-
             try {
                 GestClienThread client = new GestClienThread(server.accept(), controller, clientList);
                 clientList.add(client);
                 client.start();
-                client.join();
-
-            } catch (IOException ex) {
+            } catch (IOException ex) {  //Test
                 controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore nella start del Server", ex);
+            } catch (NullPointerException exN) {
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore Puntatore a null", exN);
             }
         }
 
     }
 
-    // TODO si blocca quando clicco sul bottone di stop, da un errore di array out of bound
+    // TODO si blocca quando clicco sul bottone di stop, da un errore di array out of bound e altri mille errori
     public void stopServer() {
         try {
             exit = true;
-            
             server.close();
             controller.printLog("Server chiusto correttamente");
-        } catch (IOException ex) {
+        } catch (IOException | NullPointerException ex ) {
             controller.printLog("Errore nella chiusura del server sulla porta: " + NUM_PORTA + ". " + ex.getMessage());
         }
     }
