@@ -14,26 +14,25 @@ import javafx.stage.WindowEvent;
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class Server extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
+
         Scene scene = new Scene(root);
-        
+
         stage.setScene(scene);
         stage.show();
-        
+
         //Se chiudo il server chiudo tutto //TODO assiucurarsi che chiuda anche il socket
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override 
+            @Override
             public void handle(WindowEvent event) {
                 Platform.exit();
                 System.exit(0);
             }
         });
     }
-    
 
     /**
      * @param args the command line arguments
@@ -41,5 +40,5 @@ public class Server extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

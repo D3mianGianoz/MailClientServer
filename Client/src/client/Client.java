@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import model.DataModel;
 
 /**
  *
@@ -68,14 +69,26 @@ public class Client extends Application {
         primaryStage.show();
     }
 
-    public static void showEmailClient() {
+    public static void showEmailClient(String emailLogg) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("ClientView.fxml"));
+        
+       
         AnchorPane ClientPane;
         try {
             ClientPane = loader.load();
+            
+             //Prendo il controller
+            ClientController controller = loader.getController();
+            //Carico il DataModel
+            DataModel model = new DataModel();
+            model.loadData();
+            Logger.getLogger(Client.class.getName()).log(Level.FINE, "Carico il data Model con queste Email", model.toString());
+            //faccio partire il controller
+            controller.initModel(model);
+            
             Scene sceneEm = new Scene(ClientPane);
-            primaryStage.setTitle("Client Email di ?");
+            primaryStage.setTitle("Client Email di " + emailLogg);
             primaryStage.setScene(sceneEm);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "load del layout Principale", ex);

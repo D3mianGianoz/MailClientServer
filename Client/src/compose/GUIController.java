@@ -41,7 +41,7 @@ public class GUIController implements Initializable {
 
     @FXML
     void goBackHome(ActionEvent event) {
-        Client.showEmailClient();
+        //Client.showEmailClient();
     }
 
     /**
