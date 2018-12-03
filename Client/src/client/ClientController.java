@@ -40,15 +40,18 @@ public class ClientController implements Initializable {
 
     @FXML
     private TextArea txtData;
+    
+    @FXML
+    private TextArea txtDestinatario;
+
+    @FXML
+    private TextArea txtMittente;
 
     @FXML
     private TextArea txtOggetto;
 
     @FXML
     private TextArea txtTesto;
-
-    @FXML
-    private TextArea txtMittente;
 
     @FXML
     private Button btReplyAll;
@@ -84,28 +87,69 @@ public class ClientController implements Initializable {
         }
 
         if (model == null) {
-            throw new IllegalStateException("Model passato vuoto! Errore");
+            throw new IllegalStateException("Model passato nullo! Errore");
         }
 
         this.clmodel = model;
-        lwEmail.setItems(model.getEmailList());
+
+        //Binding Lista
+        bindingListW();
+
+        //Binding dei campi Email
+        bindingFields();
+    }
+
+    private void bindingListW() {
+
+        lwEmail.setItems(clmodel.getEmailList());
 
         lwEmail.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Email>() {
             @Override
             public void changed(ObservableValue<? extends Email> observable, Email oldSelection, Email newSelection) {
-                model.setCurrentEmail(newSelection);
+                clmodel.setCurrentEmail(newSelection);
             }
         });
 
-        model.getCurrentEmailProperty().addListener(new ChangeListener<Email>() {
+        clmodel.getCurrentEmailProperty().addListener(new ChangeListener<Email>() {
             @Override
             public void changed(ObservableValue<? extends Email> observable, Email oldEmail, Email newEmail) {
                 if (newEmail == null) {
                     lwEmail.getSelectionModel().clearSelection();
-
                 } else {
                     lwEmail.getSelectionModel().select(newEmail);
                 }
+            }
+        });
+
+    }
+
+    private void bindingFields() {
+
+        clmodel.getCurrentEmailProperty().addListener(new ChangeListener<Email>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Email> observable, Email oldEmail, Email newEmail) {
+                if (oldEmail != null) {
+                    txtData.textProperty().unbindBidirectional(oldEmail.dataProperty());
+                    txtDestinatario.textProperty().unbindBidirectional(oldEmail.destinatariStrProperty());
+                    txtMittente.textProperty().unbindBidirectional(oldEmail.mittenteProperty());
+                    txtOggetto.textProperty().unbindBidirectional(oldEmail.oggettoProperty());
+                    txtTesto.textProperty().unbindBidirectional(oldEmail.testoProperty());
+                }
+                if (newEmail == null) {
+                    txtData.setText("");
+                    txtDestinatario.setText("");
+                    txtMittente.setText("");
+                    txtOggetto.setText("");
+                    txtTesto.setText("");
+                } else {
+                    txtData.textProperty().bindBidirectional(newEmail.dataProperty());
+                    txtDestinatario.textProperty().bindBidirectional(newEmail.destinatariStrProperty());
+                    txtMittente.textProperty().bindBidirectional(newEmail.mittenteProperty());
+                    txtOggetto.textProperty().bindBidirectional(newEmail.oggettoProperty());
+                    txtTesto.textProperty().bindBidirectional(newEmail.testoProperty());
+                }
+
             }
         });
     }

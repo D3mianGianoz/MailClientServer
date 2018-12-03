@@ -15,6 +15,8 @@ import javafx.collections.ObservableList;
 /**
  *
  * @author Alberto Costamagna, Damiano Gianotti
+ *
+ * Client
  */
 public class Email implements Serializable {
 
@@ -22,7 +24,7 @@ public class Email implements Serializable {
     private final IntegerProperty id = new SimpleIntegerProperty();
 
     Email() {
-
+        //TODO REMOVE
     }
 
     public int getId() {
@@ -63,14 +65,21 @@ public class Email implements Serializable {
         data.set(value);
     }
 
+    public StringProperty dataProperty() {
+        String dataAsString = getData().toString();
+        SimpleStringProperty result = new SimpleStringProperty(dataAsString);
+        return result;
+    }
+
+    /*
     public ObjectProperty<LocalDate> dataProperty() {
         return data;
     }
-
+     */
     //Destinatari
     private final ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<>());
 
-    public ObservableList<String> getDestinatary() {
+    public ObservableList<String> getDestinatariList() {
         return destinatari;
     }
 
@@ -78,6 +87,23 @@ public class Email implements Serializable {
         d.forEach((String s) -> {
             this.destinatari.add(s);
         });
+    }
+
+    public String getDestinatari() {
+        String result = "";
+
+        if (destinatari != null) {
+            for (String dest : destinatari) {
+                result = result + dest + ";";
+            }
+            
+            return result;
+        }
+        return "ERROR in get, null list";
+    }
+    
+    public StringProperty destinatariStrProperty() {
+        return new SimpleStringProperty(getDestinatari());
     }
 
     //Oggetto
@@ -121,11 +147,15 @@ public class Email implements Serializable {
 
     @Override
     public String toString() {
+        return ("Mittente: " + getMittente() + " | Oggetto: " + getOggetto() + " | Data: " + getData());
+    }
+
+    public String toFileFormat() {
         return ("Id: " + getId() + "\nMittente: " + getMittente() + "\nDestinatario/i: " + destinatari.toString()
                 + "\nOggetto: " + getOggetto() + "\nTesto: " + getTesto() + "\nData: " + getData());
     }
 
-    /**
+    /*
      * public static void main(String[] args) { ArrayList<String> dest = new
      * ArrayList<>(); dest.add("Dami"); Email ess = new Email(0, "mit", dest,
      * "ogg", "tes", LocalDate.now()); dest.add("Costi"); Email es = new
@@ -133,16 +163,15 @@ public class Email implements Serializable {
      * System.out.println("Email 1\n" + ess.toString() + "\nEmail 2\n" +
      * es.toString()); }
      */
-    
     public ArrayList<Email> load() {
         ArrayList<String> dest = new ArrayList<>();
         dest.add("Dami");
-        Email ess = new Email(0, "mit", dest, "ogg", "tes", LocalDate.now());
+        Email ess = new Email(1, "Damiano", dest, "Client Email", "Funziona ?", LocalDate.now());
         dest.add("Costi");
-        Email es = new Email(0, "mit", dest, "ogg", "tes", LocalDate.now());
-        Email es3 = new Email(0, "mit", dest, "ogg", "tes", LocalDate.now());
-        System.out.println("Email 1\n" + ess.toString() + "\nEmail 2\n" + es.toString());
-        ArrayList<Email> result = new ArrayList<Email>();
+        Email es = new Email(2, "Giovanni", dest, "Roberto mi infatistidisce", "Non ne posso più, ti prego aiutami", LocalDate.now());
+        Email es3 = new Email(3, "Federico", dest, "Oggi c'è il sole", "Finalmente una bella giornata, peccato io debba studiare", LocalDate.now());
+
+        ArrayList<Email> result = new ArrayList<>();
         result.add(es);
         result.add(ess);
         result.add(es3);
