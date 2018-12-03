@@ -28,10 +28,10 @@ public class ClientSocket {
         try {
             this.socket = new Socket("127.0.0.1", 8070);
             out = new ObjectOutputStream(socket.getOutputStream());
-            in =  new ObjectInputStream(socket.getInputStream());
-            System.out.println("Ho aperto il socket verso il server");      
+            in = new ObjectInputStream(socket.getInputStream());
+            System.out.println("Ho aperto il socket verso il server");
         } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Connesione al socket fallita", ex); 
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Connesione al socket fallita", ex);
         }
     }
 
@@ -57,20 +57,29 @@ public class ClientSocket {
     //TODO da finire
     public void sendObject(Object obj) {
         try {
-          out.writeObject(obj);
-          out.flush();
+            out.writeObject(obj);
+            out.flush();
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallito invio di: " + obj.getClass(), ex);
-        } 
+        }
     }
-    
-    public String readObjectString(){
+
+    public String readObjectString() {
         try {
-            String ret = (String)in.readObject();
+            String ret = (String) in.readObject();
             return ret;
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallita ricezione" , ex);
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallita ricezione Stringa", ex);
         }
         return "Error in readString";
+    }
+
+    public Object readObject() {
+        try {
+            return in.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client : fallito ricezione Obj", ex);
+        }
+        return null;
     }
 }

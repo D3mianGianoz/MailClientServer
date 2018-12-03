@@ -5,6 +5,7 @@
  */
 package model;
 
+import connection.ClientSocket;
 import java.util.ArrayList;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -14,7 +15,7 @@ import javafx.collections.ObservableList;
 /**
  *
  * @author Damiano
- * 
+ *
  * Necessaria per il Client, forse anche per il server ?
  */
 public class DataModel {
@@ -49,6 +50,13 @@ public class DataModel {
         Email l = new Email();
         ArrayList<Email> load = l.load();
         emailList = FXCollections.observableArrayList(load);
+    }
+
+    public void loadDataReal(ClientSocket clsocketDM) {
+        // PROVO A RICHIEDERE LA LISTE DELLE EMAIL DAL SERVER
+        clsocketDM.sendObject("getMyEmails");
+        Object read = clsocketDM.readObject();
+        System.out.println(read.toString());
     }
 
     @Override

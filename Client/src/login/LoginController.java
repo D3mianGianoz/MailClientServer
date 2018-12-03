@@ -51,7 +51,9 @@ public class LoginController implements Initializable {
                 String ack = clsocketLogin.readObjectString();
                 if (ack.equals("ACK email login")) {
                     alert("Login effettuato", Alert.AlertType.INFORMATION);
-                    Client.setClsocket(clsocketLogin);
+                    
+                    //setto il socket
+                    Client.setClsocket(clsocketLogin); 
                     Client.showEmailClient(loginMail);
                 } else {
                     alert("Errore login", Alert.AlertType.ERROR);

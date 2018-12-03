@@ -73,17 +73,20 @@ public class Client extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("ClientView.fxml"));
         
-       
         AnchorPane ClientPane;
         try {
             ClientPane = loader.load();
             
              //Prendo il controller
             ClientController controller = loader.getController();
+            
             //Carico il DataModel
             DataModel model = new DataModel();
-            model.loadData();
+            
+            //Provo caricare i dati dal server
+            model.loadDataReal(clsocket);
             Logger.getLogger(Client.class.getName()).log(Level.FINE, "Carico il data Model con queste Email", model.toString());
+            
             //faccio partire il controller
             controller.initModel(model);
             

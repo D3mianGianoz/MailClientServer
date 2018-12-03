@@ -55,7 +55,8 @@ public class ServerThread extends Thread {
                 controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore nella start del Server", ex);
             } catch (NullPointerException exN) {
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore Puntatore a null", exN);
+                //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore Puntatore a null", exN);
+                controller.printLog("Errore puntatore a null: " + exN.getMessage());
             }
         }
 
