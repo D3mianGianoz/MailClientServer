@@ -2,12 +2,13 @@ package server;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javax.swing.JOptionPane;
 import thread.ServerThread;
 
 /**
@@ -39,10 +40,14 @@ public class ServerController implements Initializable {
     // Inizializza il serverMail mettendo in ascolto il socket sulla porta indicata dal txtPorta
     public void startServer()
     {
-        server = new ServerThread(this);
-        this.printLog("Inizializzazione del server...");
-        server.start();
-        lblStatus.setText("Server is running");
+        try {
+            server = new ServerThread(this);                           //TODO Passi sempre lo stesso servercontroller
+            this.printLog("Inizializzazione del server...");
+            server.start();
+            lblStatus.setText("Server is running");
+        } catch (Exception e) {
+            Logger.getLogger(ServerController.class.getName()).log(Level.SEVERE, "Non puoi ristartare un server", e);
+        }
     }
     
     public void stopServer()
@@ -50,13 +55,6 @@ public class ServerController implements Initializable {
         this.printLog("Stopping server...");
         server.stopServer();
         lblStatus.setText("Server is not running");      
-    }
-    
-    
-    // Metodo per il popup di un alert box
-    public void alert(String messaggio,String titolo)
-    {
-        JOptionPane.showMessageDialog(null, messaggio , titolo, JOptionPane.INFORMATION_MESSAGE);    
     }
     
     public void printLog(String log)

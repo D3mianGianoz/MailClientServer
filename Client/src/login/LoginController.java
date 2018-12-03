@@ -13,17 +13,19 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import client.Client;
 import connection.ClientSocket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javax.swing.JOptionPane;
 
 /**
  * FXML Controller class
  *
- * @author Damiano
+ * @author Damiano Gianotti e Alberto Costamagna
  */
 public class LoginController implements Initializable {
 
-    private ClientSocket clsocket;
+    private ClientSocket clsocketLogin;
 
     @FXML
     private TextField txtMail;
@@ -32,47 +34,38 @@ public class LoginController implements Initializable {
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        clsocket = new ClientSocket();
-        
-        // Cominico al server la richiesta login
-        clsocket.sendObject("login");
-        
-        //Aspetto l'ack da parte del server
-        String ret = clsocket.readObjectString();
-        
-        if (ret.equals("ACK login"))
-        {
-            System.out.println(ret);
-            // Mando la mail al server
-            clsocket.sendObject(txtMail.getText());
-            
-            String ack = clsocket.readObjectString();
-            if (ack.equals("ACK email login"))
-                alert("Login effettuato", "login");
-            else
-                alert("errore login","errore");
-        }
-        else
-            System.out.println("Errore nella rispota del login al server");
-        
-        
-        /*
-        String readString = clsocket.readString();
-        
-        if (readString.equals("OK LOGIN")) {
-            
-            clsocket.sendString(txtMail.getText());
-            String connessione = clsocket.readString();
-            if (connessione.equals("connesso")) {
-                alert("Login Effettuato", "Success");
-                Client.showEmailClient();
+        clsocketLogin = new ClientSocket();
+        try {
+            // Cominico al server la richiesta login
+            clsocketLogin.sendObject("login");
+
+            //Aspetto l'ack da parte del server
+            String ret = clsocketLogin.readObjectString();
+
+            if (ret.equals("ACK login")) {
+                System.out.println(ret);
+                // Mando la mail al server
+                String loginMail = txtMail.getText();
+                clsocketLogin.sendObject(loginMail);
+
+                String ack = clsocketLogin.readObjectString();
+                if (ack.equals("ACK email login")) {
+                    alert("Login effettuato", Alert.AlertType.INFORMATION);
+                    
+                    //setto il socket
+                    Client.setClsocket(clsocketLogin); 
+                    Client.showEmailClient(loginMail);
+                } else {
+                    alert("Errore login", Alert.AlertType.ERROR);
+                }
             } else {
-                alert("Errore nel login..", "Errore, please retry");
+                System.out.println("Errore nella rispota del login al server");
             }
-        } else {
-            alert("Errore nella connessione","problema con il server");
+        } catch (NullPointerException ex) {
+            //Gestione Login Fallito
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Gestione Login non riuscita", ex);
+            alert("Login Fallito, Riprovare", Alert.AlertType.ERROR);
         }
-        */
     }
 
     /**
@@ -87,9 +80,9 @@ public class LoginController implements Initializable {
         assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'Login.fxml'.";
     }
 
-    // Metodo per il popup di un alert box
-    public void alert(String messaggio, String titolo) {
-        JOptionPane.showMessageDialog(null, messaggio, titolo, JOptionPane.INFORMATION_MESSAGE);
+    // Metodo per il popup di un alert box con type coerente  
+    public void alert(String messaggio, Alert.AlertType type) {
+        Alert alert = new Alert(type, messaggio);
+        alert.showAndWait();
     }
-
 }
