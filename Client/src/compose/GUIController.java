@@ -6,12 +6,17 @@
 package compose;
 
 import client.Client;
+import connection.ClientSocket;
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
+import model.Email;
+import model.SimpleEmail;
 
 /**
  * FXML Controller class
@@ -36,6 +41,22 @@ public class GUIController implements Initializable {
 
     @FXML
     void sendEmail(ActionEvent event) {
+        ClientSocket socket = Client.getClsocket();
+        socket.sendObject("invioEmail");
+        String ack = (String) socket.readObject();
+        if(ack.equals("manda email"))
+        {
+            ArrayList<String> dest = new ArrayList();
+            dest.add("costi");
+            dest.add("destinatario2");
+            Email email = new Email(new SimpleEmail(1, "prova",dest, "prova invio", "email inviata dal client prova per costi", LocalDate.now()));
+            socket.sendObject(email.getSimpleEmail());
+            ack = (String) socket.readObject();
+            if (ack.equals("ack scrittura email"))
+                System.out.println("mail inviata correttamente");
+        }
+        else
+            System.out.println("Errore invio email");
 
     }
 

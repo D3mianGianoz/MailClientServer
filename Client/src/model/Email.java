@@ -140,6 +140,7 @@ public final class Email {
     }
 
     public Email(int id, String mit, ArrayList<String> dest, String ogg, String tes, LocalDate data) {
+        this.simpleClientEmail = new SimpleEmail(id, mit, dest, ogg, tes, data);
         setId(id);
         setMittente(mit);
         setDestinatari(dest);
@@ -170,6 +171,11 @@ public final class Email {
     public String toFileFormat() {
         return ("Id: " + getId() + "\nMittente: " + getMittente() + "\nDestinatario/i: " + destinatari.toString()
                 + "\nOggetto: " + getOggetto() + "\nTesto: " + getTesto() + "\nData: " + getData());
+    }
+    
+    public SimpleEmail getSimpleEmail()
+    {
+        return this.simpleClientEmail;
     }
 
     /*

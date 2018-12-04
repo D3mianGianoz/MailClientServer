@@ -169,7 +169,6 @@ public class GestClienThread extends Thread {
                     
                     emaiList.add(new SimpleEmail(Integer.parseInt(valori[0]), valori[1], dest, valori[3], valori[4], LocalDate.parse(valori[5], DateTimeFormatter.ISO_DATE)));
                 }
-                controller.printLog(emaiList.toString());
                 
                 out.writeObject(emaiList);
                 out.flush();
@@ -216,6 +215,11 @@ public class GestClienThread extends Thread {
             scrivoEmailFile(dest,email,destinatari);
         }
         
+        try {
+            out.writeObject("ack scrittura email");
+        } catch (IOException ex) {
+            controller.printLog("Errore risposta client");
+        }
     }
     
     private void gestisciLogout() {
@@ -247,18 +251,27 @@ public class GestClienThread extends Thread {
                 controller.printLog("Impossibile aprire il bufferedWriter");
             }
             
-            bw.append("prova");
+            controller.printLog("Id:"+email.getId()+",Mittente:"+email.getMittente()+",Destinatario/i:"+getDestinatari(destinatari)+",Oggetto:"+email.getOggetto()+",Testo:"+email.getTesto()+",Data:"+email.getData().format(DateTimeFormatter.ISO_DATE));
             
-            
-            
+            bw.write("Id:"+email.getId()+",Mittente:"+email.getMittente()+",Destinatario/i:"+getDestinatari(destinatari)+",Oggetto:"+email.getOggetto()+",Testo:"+email.getTesto()+",Data:"+email.getData().format(DateTimeFormatter.ISO_DATE)+"\n");                       
+            bw.close();
+            controller.printLog("Email ricevuto dal client "+this.emailClient);
             
         } catch (IOException ex) {
             Logger.getLogger(GestClienThread.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private String getDestinatari(ArrayList<String> dest)
+    {
+        String ret = dest.get(0);
+        if (dest.size() > 1)
+        {
+            for (int i = 1;i<dest.size();i++)
+                ret = ret + ";"+dest.get(i);
+        }
         
-        
-        
-        
+        return ret;
     }
     
 }
