@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client;
 
 import connection.ClientSocket;
@@ -22,7 +17,7 @@ import model.Email;
 
 /**
  *
- * @author Damiano
+ * @author Alberto Costamagna , Damiano Gianotti
  */
 public class ClientController implements Initializable {
 
@@ -34,9 +29,6 @@ public class ClientController implements Initializable {
 //<editor-fold defaultstate="collapsed" desc="FXML declaration">
     @FXML
     private ListView<Email> lwEmail;
-
-    @FXML
-    private MenuItem EXIT;
 
     @FXML
     private TextArea txtData;

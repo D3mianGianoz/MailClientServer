@@ -1,10 +1,5 @@
 package login;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -21,7 +16,7 @@ import javafx.scene.control.Button;
 /**
  * FXML Controller class
  *
- * @author Damiano Gianotti e Alberto Costamagna
+ * @author Alberto Costamagna , Damiano Gianotti
  */
 public class LoginController implements Initializable {
 
@@ -40,7 +35,7 @@ public class LoginController implements Initializable {
             clsocketLogin.sendObject("login");
 
             //Aspetto l'ack da parte del server
-            String ret = clsocketLogin.readObjectString();
+            String ret = (String) clsocketLogin.readObject();
 
             if (ret.equals("ACK login")) {
                 System.out.println(ret);
@@ -48,7 +43,7 @@ public class LoginController implements Initializable {
                 String loginMail = txtMail.getText();
                 clsocketLogin.sendObject(loginMail);
 
-                String ack = clsocketLogin.readObjectString();
+                String ack = (String) clsocketLogin.readObject();
                 if (ack.equals("ACK email login")) {
                     alert("Login effettuato", Alert.AlertType.INFORMATION);
                     

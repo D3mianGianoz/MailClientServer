@@ -1,13 +1,7 @@
 package model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -78,7 +72,8 @@ public final class Email {
     public ObjectProperty<LocalDate> dataProperty() {
         return data;
     }
-     */
+    */
+    
     //Destinatari
     private final ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<>());
 
@@ -196,33 +191,4 @@ public final class Email {
         return result;
     }
 
-    /*
-    // Metodo di prova per scriver l'oggetto email correttamente
-    private void writeObject(ObjectOutputStream s) {
-        try {
-            s.defaultWriteObject();
-            s.writeInt(getId());
-            s.writeUTF(getMittente());
-            s.writeObject(getDestinatari());
-            s.writeUTF(getOggetto());
-            s.writeUTF(getTesto());
-            s.writeObject(getData());
-        } catch (IOException ex) {
-            Logger.getLogger(Email.class.getName()).log(Level.SEVERE, "Write Email fallita", ex);
-        }
-
-    }
-
-    private void readObject(ObjectInputStream s) {
-        try {
-            setId(s.readInt());
-            setMittente(s.readUTF());
-            setDestinatari((ArrayList<String>) s.readObject());
-            setOggetto(s.readUTF());
-            setTesto(s.readUTF());
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(Email.class.getName()).log(Level.SEVERE, "Read Email fallita", ex);
-        }
-    }
-     */
 }
