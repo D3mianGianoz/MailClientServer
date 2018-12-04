@@ -23,15 +23,12 @@ import javafx.collections.ObservableList;
  *
  * Client
  */
-public final class Email implements Serializable {
+public final class Email {
 
-    private static final long serialVersionUID = 1298309;
+    private SimpleEmail simpleClientEmail;
+
     // ID della email
     private final IntegerProperty id = new SimpleIntegerProperty();
-
-    Email() {
-        //TODO REMOVE
-    }
 
     public int getId() {
         return id.get();
@@ -151,6 +148,20 @@ public final class Email implements Serializable {
         setData(data);
     }
 
+    public Email(SimpleEmail sEmail) {
+        this.simpleClientEmail = sEmail;
+        setId(sEmail.getId());
+        setMittente(sEmail.getMittente());
+        setDestinatari(sEmail.getDestinatri());
+        setOggetto(sEmail.getOggetto());
+        setTesto(sEmail.getTesto());
+        setData(sEmail.getData());
+    }
+
+    public Email() {
+        //TODO REMOVE
+    }
+
     @Override
     public String toString() {
         return ("Mittente: " + getMittente() + " | Oggetto: " + getOggetto() + " | Data: " + getData());
@@ -185,6 +196,7 @@ public final class Email implements Serializable {
         return result;
     }
 
+    /*
     // Metodo di prova per scriver l'oggetto email correttamente
     private void writeObject(ObjectOutputStream s) {
         try {
@@ -212,4 +224,5 @@ public final class Email implements Serializable {
             Logger.getLogger(Email.class.getName()).log(Level.SEVERE, "Read Email fallita", ex);
         }
     }
+     */
 }

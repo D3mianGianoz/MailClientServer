@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import model.Email;
+import model.SimpleEmail;
 import server.ServerController;
 import static thread.ServerThread.socketList;
 
@@ -130,7 +130,7 @@ public class GestClienThread extends Thread {
 
     private void getMyEmails() {
         BufferedReader br = null;
-        ArrayList<Email> emaiList = new ArrayList<>();
+        ArrayList<SimpleEmail> emaiList = new ArrayList<>();
         try {
             // Creo bufferedReader per leggere dal file
             br = new BufferedReader(new FileReader(this.clientFile));
@@ -159,12 +159,12 @@ public class GestClienThread extends Thread {
                     String[] destString = valori[2].split(";");
                     dest.addAll(Arrays.asList(destString));
 
-                    emaiList.add(new Email(Integer.parseInt(valori[0]), valori[1], dest, valori[3], valori[4], LocalDate.parse(valori[5], DateTimeFormatter.ISO_DATE)));
+                    emaiList.add(new SimpleEmail(Integer.parseInt(valori[0]), valori[1], dest, valori[3], valori[4], LocalDate.parse(valori[5], DateTimeFormatter.ISO_DATE)));
                 }
                 controller.printLog(emaiList.toString());
                 
                 //QUI è il problema
-                out.writeObject(emaiList.get(0));
+                out.writeObject(emaiList);
                 out.flush();
             }
         } catch (IOException ex) {

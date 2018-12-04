@@ -55,7 +55,7 @@ public class DataModel {
     public void loadDataReal(ClientSocket clsocketDM) {
         // PROVO A RICHIEDERE LA LISTE DELLE EMAIL DAL SERVER
         clsocketDM.sendObject("getMyEmails");
-        Object read = clsocketDM.readObject();
+        ArrayList<SimpleEmail> read =(ArrayList<SimpleEmail>) clsocketDM.readObject();
         System.out.println(read.toString());
     }
 
