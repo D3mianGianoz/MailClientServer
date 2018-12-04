@@ -1,9 +1,11 @@
 package thread;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,6 +14,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.SimpleEmail;
 import server.ServerController;
 import static thread.ServerThread.socketList;
@@ -21,7 +25,7 @@ import static thread.ServerThread.socketList;
  * @author alberto
  */
 public class GestClienThread extends Thread {
-
+    
     private Socket socket;
     private ServerController controller;
     private ObjectInputStream in;
@@ -31,7 +35,7 @@ public class GestClienThread extends Thread {
     // Lista dei client connessi in quel momento
     // Invio la mail tramite il socket solo ai client connessi, altrimento scrivo solo sul loro file
     //private ArrayList<GestClienThread> clientList;
-
+    
     public GestClienThread(Socket r, ServerController c) {
         super("ThreadGestioneClient");
         this.clientFile = null;
@@ -43,18 +47,18 @@ public class GestClienThread extends Thread {
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
         }
-
+        
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' output stream " + ex.getMessage());
         }
     }
-
+    
     // VERSIONE DI PROVA
     @Override
     public void run() {
-
+        
         while (true) {
             String richiesta = "";
             try {
@@ -64,31 +68,35 @@ public class GestClienThread extends Thread {
             } catch (ClassNotFoundException ex) {
                 controller.printLog("Class not found " + ex.getMessage());
             }
-
+            
             //controller.printLog("Lettura stringa del client: "+ richiesta);
             // Controllo che tipo di richiesta ha fatto il client
             switch (richiesta) {
                 case "login":
                     gestsciLogin();
                     break;
-
+                    
                 case "getMyEmails":
                     getMyEmails();
                     break;
-
-                // Esco e blocco il ciclo infinito e mi rimuvo dalla lista
+                    
+                case "invioEmail":
+                    gestisciInvioEmail();
+                    break;
+                    
+                    // Esco e blocco il ciclo infinito e mi rimuvo dalla lista
                 case "exit":
                     gestisciLogout();
                     return;
             }
         }
-
+        
     }
-
+    
     private void gestsciLogin() {
         // Scrivo al client che accetto la sua richiesta di login
         controller.printLog("Sto gestendo la richiesta di login da parte del client");
-
+        
         try {
             // Comunico al client di mandarmi la sua email
             out.writeObject("ACK login");
@@ -96,7 +104,7 @@ public class GestClienThread extends Thread {
         } catch (IOException ex) {
             controller.printLog("Impossibile mandare ACK al client");
         }
-
+        
         try {
             // Leggo la email del client di login
             this.emailClient = (String) in.readObject();
@@ -105,7 +113,7 @@ public class GestClienThread extends Thread {
         } catch (ClassNotFoundException ex) {
             controller.printLog(ex.getMessage());
         }
-
+        
         // Controllo se la mail del client è nuova o il suo file con le email precedenti esiste
         clientFile = new File("EmailFiles/" + emailClient + ".txt");
         if (!clientFile.exists()) {
@@ -117,7 +125,7 @@ public class GestClienThread extends Thread {
             }
             controller.printLog("File per l'utente: " + this.emailClient + " creato correttamente");
         }
-
+        
         try {
             out.writeObject("ACK email login");
             out.flush();
@@ -125,9 +133,9 @@ public class GestClienThread extends Thread {
             controller.printLog("Errore ack email login");
         }
         controller.printLog("Client " + this.emailClient + " connesso");
-
+        
     }
-
+    
     private void getMyEmails() {
         BufferedReader br = null;
         ArrayList<SimpleEmail> emaiList = new ArrayList<>();
@@ -153,33 +161,104 @@ public class GestClienThread extends Thread {
                         String[] temp = params[i].split(":");
                         valori[i] = temp[1];
                     }
-
+                    
                     // Creo l' arraylist dei destinatari
                     ArrayList<String> dest = new ArrayList<>();
                     String[] destString = valori[2].split(";");
                     dest.addAll(Arrays.asList(destString));
-
+                    
                     emaiList.add(new SimpleEmail(Integer.parseInt(valori[0]), valori[1], dest, valori[3], valori[4], LocalDate.parse(valori[5], DateTimeFormatter.ISO_DATE)));
                 }
                 controller.printLog(emaiList.toString());
                 
-                //QUI è il problema
                 out.writeObject(emaiList);
                 out.flush();
             }
         } catch (IOException ex) {
             controller.printLog("Errore: " + ex.getMessage());
         }
-
+        finally
+        {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                controller.printLog("Errore nella chiusura del file per la lettura delle email");
+            }
+        }
+        
     }
-
+    
+    private void gestisciInvioEmail()
+    {
+        // Comunico al client di mandarmi la mail
+        try {
+            out.writeObject("manda email");
+        } catch (IOException ex) {
+            controller.printLog("Errore risposta client");
+        }
+        
+        SimpleEmail email = null;
+        try {
+            // Aspetto che il client mi invio la sua simple email
+            email = (SimpleEmail) in.readObject();
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile ricevere email");
+        } catch (ClassNotFoundException ex) {
+            controller.printLog(ex.getMessage());
+        }
+        
+        // Recupero i destinatri della email
+        ArrayList<String> destinatari = email.getDestinatri();
+        
+        // Per ogni destinatario vado a scrivere la mail nel rispettivo file
+        for(String dest: destinatari)
+        {
+            scrivoEmailFile(dest,email,destinatari);
+        }
+        
+    }
+    
     private void gestisciLogout() {
         socketList.remove(this);
         controller.printLog("Client: " + this.emailClient + " gestito correttamente, disconesso");
     }
-
+    
     public String getEmailFromSocket() {
         return this.emailClient;
     }
-
+    
+    private synchronized void scrivoEmailFile(String dest,SimpleEmail email,ArrayList<String> destinatari)
+    {
+        try {
+            // Apro il file corrispondente al destinatario
+            // Se c'è un nuovo destinatario creo il nuo
+            File f = new File("EmailFiles/" + dest + ".txt");
+            if(!f.exists())
+                try {
+                    f.createNewFile();
+                } catch (IOException ex) {
+                    controller.printLog("Errore creazione nuovo file per destinatario");
+                }
+            
+            BufferedWriter bw = null;
+            try {
+                bw = new BufferedWriter(new FileWriter(f, true));
+            } catch (IOException ex) {
+                controller.printLog("Impossibile aprire il bufferedWriter");
+            }
+            
+            bw.append("prova");
+            
+            
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(GestClienThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+        
+    }
+    
 }
