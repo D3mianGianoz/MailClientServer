@@ -23,14 +23,15 @@ public class Client extends Application {
     private static Stage primaryStage;
     private static Stage secondaryStage;
     private static AnchorPane mainLayout;
-    private static ClientSocket clsocket;
+    private static ClientSocket clSocket;
+    private static DataModel coreModel;
 
     public static ClientSocket getClsocket() {
-        return clsocket;
+        return clSocket;
     }
 
     public static void setClsocket(ClientSocket clsocket) {
-        Client.clsocket = clsocket;
+        Client.clSocket = clsocket;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class Client extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override 
             public void handle(WindowEvent event) {
-                clsocket.cls();
+                clSocket.cls();
                 Platform.exit();
                 System.exit(0);
             }
@@ -63,7 +64,7 @@ public class Client extends Application {
         primaryStage.show();
     }
 
-    public static void showEmailClient(String emailLogg) {
+    public static void showEmailClient(String userEmail) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("ClientView.fxml"));
         
@@ -74,18 +75,18 @@ public class Client extends Application {
              //Prendo il controller
             ClientController controller = loader.getController();
             
-            //Carico il DataModel
-            DataModel model = new DataModel();
+            //Creo il DataModel
+            coreModel = new DataModel();
             
             //Provo caricare i dati dal server
-            model.loadDataReal(clsocket);
-            Logger.getLogger(Client.class.getName()).log(Level.FINE, "Carico il data Model con queste Email", model.toString());
+            coreModel.loadDataReal(clSocket);
+            Logger.getLogger(Client.class.getName()).log(Level.FINE, "Carico il data Model con queste Email", coreModel.toString());
             
             //faccio partire il controller
-            controller.initModel(model);
+            controller.initModel(coreModel);
             
             Scene sceneEm = new Scene(ClientPane);
-            primaryStage.setTitle("Client Email di " + emailLogg);
+            primaryStage.setTitle("Client Email di " + userEmail);
             primaryStage.setScene(sceneEm);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "load del layout Principale", ex);

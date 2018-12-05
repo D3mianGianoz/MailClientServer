@@ -17,7 +17,7 @@ public class DataModel {
 
     private ObservableList<Email> emailList = FXCollections.observableArrayList();
     private final ObjectProperty<Email> currentEmail = new SimpleObjectProperty<>(null);
-
+   
     public ObservableList<Email> getEmailList() {
         return emailList;
     }

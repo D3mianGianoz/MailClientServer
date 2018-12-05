@@ -32,7 +32,7 @@ public class ClientController implements Initializable {
 
     @FXML
     private TextArea txtData;
-    
+
     @FXML
     private TextArea txtDestinatario;
 
@@ -65,6 +65,26 @@ public class ClientController implements Initializable {
     @FXML
     void menuNewEmail(ActionEvent event) {
         Client.showComposeEmail();
+    }
+
+    @FXML
+    void onReply(ActionEvent event) {
+        
+    }
+
+    @FXML
+    void onFoward(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onReplyAll(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onDelete(ActionEvent event) {
+
     }
 
     @Override
