@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author alberto
+ * @author Alberto Costamagna , Damiano Gianotti
  */
 public class SimpleEmail implements Serializable {
     

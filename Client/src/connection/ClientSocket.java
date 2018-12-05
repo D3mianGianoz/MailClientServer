@@ -8,15 +8,13 @@ package connection;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author Damiano
+ * @author Alberto Costamagna , Damiano Gianotti
  */
 public class ClientSocket {
 
@@ -44,17 +42,6 @@ public class ClientSocket {
         }
     }
 
-    public void sendString(String toSend) { //in teoria flush automatico
-        try {
-            OutputStream outputStream = this.socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(outputStream, true);
-            writer.println(toSend);
-        } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    //TODO da finire
     public void sendObject(Object obj) {
         try {
             out.writeObject(obj);
@@ -62,16 +49,6 @@ public class ClientSocket {
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallito invio di: " + obj.getClass(), ex);
         }
-    }
-
-    public String readObjectString() {
-        try {
-            String ret = (String) in.readObject();
-            return ret;
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client: fallita ricezione Stringa", ex);
-        }
-        return "Error in readString";
     }
 
     public Object readObject() {

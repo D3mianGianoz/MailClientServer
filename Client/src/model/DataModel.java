@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import connection.ClientSocket;
@@ -14,15 +9,15 @@ import javafx.collections.ObservableList;
 
 /**
  *
- * @author Damiano
+ * @author Alberto Costamagna , Damiano Gianotti
  *
- * Necessaria per il Client, forse anche per il server ?
+ * Necessaria per il Client
  */
 public class DataModel {
 
     private ObservableList<Email> emailList = FXCollections.observableArrayList();
-    private final ObjectProperty<Email> currentEmail = new SimpleObjectProperty<Email>(null);
-
+    private final ObjectProperty<Email> currentEmail = new SimpleObjectProperty<>(null);
+   
     public ObservableList<Email> getEmailList() {
         return emailList;
     }
@@ -43,10 +38,10 @@ public class DataModel {
         emailList.remove(emailR);
     }
 
+    //TODO da rimuovere solo per provare
     public void loadData() {
         // Caricare i dati inviati al Server
 
-        //TODO da rimuovere solo per provare
         Email l = new Email();
         ArrayList<Email> load = l.load();
         emailList = FXCollections.observableArrayList(load);
@@ -55,8 +50,17 @@ public class DataModel {
     public void loadDataReal(ClientSocket clsocketDM) {
         // PROVO A RICHIEDERE LA LISTE DELLE EMAIL DAL SERVER
         clsocketDM.sendObject("getMyEmails");
-        ArrayList<SimpleEmail> read =(ArrayList<SimpleEmail>) clsocketDM.readObject();
-        System.out.println(read.toString());
+        ArrayList<SimpleEmail> read = (ArrayList<SimpleEmail>) clsocketDM.readObject();
+        fromSimpletoEmail(read);
+    }
+
+    public void fromSimpletoEmail(ArrayList<SimpleEmail> serverL) {
+        ArrayList<Email> load = new ArrayList<>();
+
+        for (SimpleEmail smail : serverL) {
+            load.add(new Email(smail));
+        }
+        emailList = FXCollections.observableArrayList(load);
     }
 
     @Override
