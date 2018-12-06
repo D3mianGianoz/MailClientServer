@@ -10,14 +10,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import model.DataModel;
 import model.Email;
+import connection.ClientSocket;
+import client.*;
+import model.*;
+import java.time.LocalDate;
 
 /**
  * FXML Controller class
@@ -51,7 +53,7 @@ public class ComposeController implements Initializable {
             ArrayList<String> dest = new ArrayList();
             dest.add("costi");
             dest.add("destinatario2");
-            Email email = new Email(new SimpleEmail(1, "prova",dest, "prova invio", "email inviata dal client prova per costi", LocalDate.now()));
+            Email email = new Email(new SimpleEmail(1, "prova",dest, "prova invio LOCK ESCLUSIVO", "email inviata dal client prova per costi", LocalDate.now()));
             socket.sendObject(email.getSimpleEmail());
             ack = (String) socket.readObject();
             if (ack.equals("ack scrittura email"))

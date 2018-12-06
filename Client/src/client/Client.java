@@ -95,7 +95,7 @@ public class Client extends Application {
 
     public static void showComposeEmail() {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Client.class.getResource("/compose/GUInewEmail.fxml"));
+        loader.setLocation(Client.class.getResource("/compose/newEmail.fxml"));
         AnchorPane ClientPane;
         try {
             ClientPane = loader.load();

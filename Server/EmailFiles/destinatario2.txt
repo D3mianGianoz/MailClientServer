@@ -1,1 +1,4 @@
 Id:1,Mittente:prova,Destinatario/i:costi;destinatario2,Oggetto:prova invio,Testo:email inviata dal client prova per costi,Data:2018-12-04
+Id:1,Mittente:prova,Destinatario/i:costi;destinatario2,Oggetto:prova invio,Testo:email inviata dal client prova per costi,Data:2018-12-05
+Id:1,Mittente:prova,Destinatario/i:costi;destinatario2,Oggetto:prova invio LOCK ESCLUSIVO,Testo:email inviata dal client prova per costi,Data:2018-12-05
+Id:1,Mittente:prova,Destinatario/i:costi;destinatario2,Oggetto:prova invio LOCK ESCLUSIVO,Testo:email inviata dal client prova per costi,Data:2018-12-05
