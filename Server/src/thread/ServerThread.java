@@ -15,6 +15,7 @@ import server.ServerController;
 public class ServerThread extends Thread {
 
     private final int NUM_PORTA = 8070;
+    private final int MAX_NUM_THREAD = 100;
     private ServerSocket server;
     private final ServerController controller;
     public static ArrayList<GestClienThread> socketList;
@@ -23,7 +24,7 @@ public class ServerThread extends Thread {
     public ServerThread(ServerController c) {
         super();
         this.controller = c;
-        socketList = new ArrayList<>();
+        socketList = new ArrayList<>(MAX_NUM_THREAD);
     }
 
     // Metodo richiamato una volta startato il thread
@@ -48,14 +49,19 @@ public class ServerThread extends Thread {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
             try {
-                GestClienThread client = new GestClienThread(server.accept(), controller);
-                socketList.add(client);
-                client.start();
-            } catch (IOException ex) {  //Test
+                if(socketList.size() < MAX_NUM_THREAD)
+                {
+                    GestClienThread client = new GestClienThread(server.accept(), controller);
+                    socketList.add(client);
+                    client.start();
+                }
+                else
+                    controller.printLog("Raggiunto numero massimo di conessioni disponibili");
+                
+            } catch (IOException ex) {  
                 controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore nella start del Server", ex);
-            } catch (NullPointerException exN) {
-                //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore Puntatore a null", exN);
+            } catch (NullPointerException exN) {                
                 controller.printLog("Errore puntatore a null: " + exN.getMessage());
             }
         }

@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+<<<<<<< HEAD
 import java.util.logging.Level;
 import java.util.logging.Logger;
+=======
+>>>>>>> 2cfe13bde0b090974786ef9a5f4a6765280e7585
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,8 +27,15 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import model.DataModel;
 import model.Email;
+<<<<<<< HEAD
 import model.SimpleEmail;
 import login.LoginController;
+=======
+import connection.ClientSocket;
+import client.*;
+import model.*;
+import java.time.LocalDate;
+>>>>>>> 2cfe13bde0b090974786ef9a5f4a6765280e7585
 
 /**
  * FXML Controller class
@@ -58,9 +68,19 @@ public class ComposeController implements Initializable {
         ClientSocket socket = Client.getClsocket();
         socket.sendObject("invioEmail");
         String ack = (String) socket.readObject();
+<<<<<<< HEAD
         if (ack.equals("manda email")) {
             SimpleEmail toSend = newEmail();
             socket.sendObject(toSend);
+=======
+        if(ack.equals("manda email"))
+        {
+            ArrayList<String> dest = new ArrayList();
+            dest.add("costi");
+            dest.add("destinatario2");
+            Email email = new Email(new SimpleEmail(1, "prova",dest, "prova invio LOCK ESCLUSIVO", "email inviata dal client prova per costi", LocalDate.now()));
+            socket.sendObject(email.getSimpleEmail());
+>>>>>>> 2cfe13bde0b090974786ef9a5f4a6765280e7585
             ack = (String) socket.readObject();
             if (ack.equals("ack scrittura email")) {
                 System.out.println("mail inviata correttamente");
