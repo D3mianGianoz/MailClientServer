@@ -16,7 +16,7 @@ public class ServerThread extends Thread {
 
     private final int NUM_PORTA = 8070;
     private ServerSocket server;
-    private ServerController controller;
+    private final ServerController controller;
     public static ArrayList<GestClienThread> socketList;
     private boolean exit = false;
 

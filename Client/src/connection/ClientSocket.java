@@ -29,7 +29,7 @@ public class ClientSocket {
             in = new ObjectInputStream(socket.getInputStream());
             System.out.println("Ho aperto il socket verso il server");
         } catch (IOException ex) {
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Connesione al socket fallita", ex);
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Connesione al socket fallita", ex.toString());
         }
     }
 

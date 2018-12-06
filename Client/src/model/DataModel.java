@@ -38,16 +38,8 @@ public class DataModel {
         emailList.remove(emailR);
     }
 
-    //TODO da rimuovere solo per provare
-    public void loadData() {
-        // Caricare i dati inviati al Server
 
-        Email l = new Email();
-        ArrayList<Email> load = l.load();
-        emailList = FXCollections.observableArrayList(load);
-    }
-
-    public void loadDataReal(ClientSocket clsocketDM) {
+    public void loadData(ClientSocket clsocketDM) {
         // PROVO A RICHIEDERE LA LISTE DELLE EMAIL DAL SERVER
         clsocketDM.sendObject("getMyEmails");
         ArrayList<SimpleEmail> read = (ArrayList<SimpleEmail>) clsocketDM.readObject();

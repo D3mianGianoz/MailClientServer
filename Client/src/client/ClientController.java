@@ -3,6 +3,7 @@ package client;
 import connection.ClientSocket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -10,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import model.DataModel;
 import model.Email;
@@ -57,34 +57,38 @@ public class ClientController implements Initializable {
 
     @FXML
     void menuLogout(ActionEvent event) {
-        CCsocket = Client.getClsocket();
-        CCsocket.cls();
+        Client.getClsocket().cls();
+        
         Client.showLoginView();
     }
 
     @FXML
     void menuNewEmail(ActionEvent event) {
-        Client.showComposeEmail();
+        Client.showComposeEmail("New Email");
     }
 
     @FXML
     void onReply(ActionEvent event) {
-        
+        Client.showComposeEmail("Reply");
     }
 
     @FXML
     void onFoward(ActionEvent event) {
-
+        Client.showComposeEmail("Foward");
     }
 
     @FXML
     void onReplyAll(ActionEvent event) {
-
+        Client.showComposeEmail("ReplyAll");
     }
 
     @FXML
     void onDelete(ActionEvent event) {
-
+        Email emailToRemove = clmodel.getCurrentEmail();
+        
+        //TODO comunicazione al server della cancellazione dell ' email
+            
+        clmodel.remove(emailToRemove); 
     }
 
     @Override

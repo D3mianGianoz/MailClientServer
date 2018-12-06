@@ -72,8 +72,7 @@ public final class Email {
     public ObjectProperty<LocalDate> dataProperty() {
         return data;
     }
-    */
-    
+     */
     //Destinatari
     private final ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<>());
 
@@ -154,10 +153,6 @@ public final class Email {
         setData(sEmail.getData());
     }
 
-    public Email() {
-        //TODO REMOVE
-    }
-
     @Override
     public String toString() {
         return ("Mittente: " + getMittente() + " | Oggetto: " + getOggetto() + " | Data: " + getData());
@@ -167,34 +162,9 @@ public final class Email {
         return ("Id: " + getId() + "\nMittente: " + getMittente() + "\nDestinatario/i: " + destinatari.toString()
                 + "\nOggetto: " + getOggetto() + "\nTesto: " + getTesto() + "\nData: " + getData());
     }
-    
-    public SimpleEmail getSimpleEmail()
-    {
+
+    public SimpleEmail getSimpleEmail() {
         return this.simpleClientEmail;
-    }
-
-    /*
-     * public static void main(String[] args) { ArrayList<String> dest = new
-     * ArrayList<>(); dest.add("Dami"); Email ess = new Email(0, "mit", dest,
-     * "ogg", "tes", LocalDate.now()); dest.add("Costi"); Email es = new
-     * Email(0, "mit", dest, "ogg", "tes", LocalDate.now());
-     * System.out.println("Email 1\n" + ess.toString() + "\nEmail 2\n" +
-     * es.toString()); }
-     */
-    public ArrayList<Email> load() {
-        ArrayList<String> dest = new ArrayList<>();
-        dest.add("Dami");
-        Email ess = new Email(1, "Damiano", dest, "Client Email", "Funziona ?", LocalDate.now());
-        dest.add("Costi");
-        Email es = new Email(2, "Giovanni", dest, "Roberto mi infatistidisce", "Non ne posso più, ti prego aiutami", LocalDate.now());
-        Email es3 = new Email(3, "Federico", dest, "Oggi c'è il sole", "Finalmente una bella giornata, peccato io debba studiare", LocalDate.now());
-
-        ArrayList<Email> result = new ArrayList<>();
-        result.add(es);
-        result.add(ess);
-        result.add(es3);
-
-        return result;
     }
 
 }

@@ -58,7 +58,7 @@ public class LoginController implements Initializable {
             }
         } catch (NullPointerException ex) {
             //Gestione Login Fallito
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Gestione Login non riuscita", ex);
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Gestione Login non riuscita", ex.getCause());
             alert("Login Fallito, Riprovare", Alert.AlertType.ERROR);
         }
     }
@@ -76,7 +76,7 @@ public class LoginController implements Initializable {
     }
 
     // Metodo per il popup di un alert box con type coerente  
-    public void alert(String messaggio, Alert.AlertType type) {
+    public static void alert(String messaggio, Alert.AlertType type) {
         Alert alert = new Alert(type, messaggio);
         alert.showAndWait();
     }
