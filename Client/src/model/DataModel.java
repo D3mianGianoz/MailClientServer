@@ -49,7 +49,7 @@ public class DataModel {
         ArrayList<SimpleEmail> read = (ArrayList<SimpleEmail>) clsocketDM.readObject();
         fromSimpletoEmail(read);
     }
-
+    
     public void fromSimpletoEmail(ArrayList<SimpleEmail> serverL) {
         ArrayList<Email> load = new ArrayList<>();
 

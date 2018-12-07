@@ -13,6 +13,7 @@ import model.DataModel;
 import model.Email;
 import model.SimpleEmail;
 import login.LoginController;
+import static util.Utility.alert;
 
 /**
  *
@@ -34,7 +35,7 @@ public class ClientTask implements Runnable {
     public void run() {
         model.addEmail(emailT);
         Logger.getLogger(ClientThread.class.getName()).log(Level.FINE, "Email correttamente aggiunta");
-        LoginController.alert("Nuova Email !", Alert.AlertType.INFORMATION, true);
+        alert("Nuova Email !", Alert.AlertType.INFORMATION, true);
     }
 
 }

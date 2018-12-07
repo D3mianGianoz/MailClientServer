@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import static util.Utility.alert;
 
 /**
  * FXML Controller class
@@ -75,14 +76,4 @@ public class LoginController implements Initializable {
         assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'Login.fxml'.";
     }
 
-    // Metodo per il popup di un alert box con type coerente  
-    public static void alert(String messaggio, Alert.AlertType type) {
-        Alert alert = new Alert(type, messaggio);
-        alert.showAndWait();
-    }
-
-    public static void alert(String messaggio, Alert.AlertType type, boolean NoWait) {
-        Alert alert = new Alert(type, messaggio);
-        alert.show();
-    }
 }

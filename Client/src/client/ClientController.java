@@ -13,10 +13,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import login.LoginController;
 import model.DataModel;
 import model.Email;
 import model.SimpleEmail;
+import static util.Utility.alert;
 
 /**
  *
@@ -88,20 +88,23 @@ public class ClientController implements Initializable {
     @FXML         //TODO comunicazione al server della cancellazione dell ' email
     void onDelete(ActionEvent event) {
         Email emailToRemove = clmodel.getCurrentEmail();
-        CCsocket = Client.getClsocket();
 
-        CCsocket.sendObject("rimoviEmail");
+        CCsocket.sendObject("rimuoviEmail");
         String ack = (String) CCsocket.readObject();
-        if (ack.equals("rimovi email")) {
+        if (ack.equals("rimuovi email")) {
             SimpleEmail toSend = emailToRemove.getSimpleEmail();
             CCsocket.sendObject(toSend);
             ack = (String) CCsocket.readObject();
             if (ack.equals("ack rimozione email")) {
                 System.out.println("mail rimossa correttamente");
-                LoginController.alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+                alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+            } else {
+                alert("Delete Email fallita", Alert.AlertType.ERROR);
+                return;
             }
         } else {
-            System.out.println("Errore rimozione email");
+            System.out.println("Errore di comunicazione");
+            return;
         }
 
         clmodel.removeEmail(emailToRemove);
@@ -123,15 +126,43 @@ public class ClientController implements Initializable {
         }
 
         this.clmodel = model;
+        CCsocket = Client.getClsocket();
 
         //Binding Lista
         bindingListW();
 
         //Binding dei campi Email
         bindingFields();
-        
-        //Lancio il Thread per le nuove Email
+
+        //creo il Thread per le nuove Email
         listenerNewEmails();
+    }
+
+    private void listenerNewEmails() {
+        ClientThread cThread = new ClientThread(0, this, clmodel, Client.getUserEmail());
+        int portaVariabile = cThread.getPortaClient();
+        if (sendPorta(portaVariabile))
+            cThread.start();
+        else
+            alert("Could not sync with server", Alert.AlertType.ERROR);
+    }
+
+    private boolean sendPorta(int porta) {
+        CCsocket.sendObject("aggiungiPorta");
+        String ack = (String) CCsocket.readObject();
+        if (ack.equals("aggiungi porta")) {
+            CCsocket.sendObject(porta);
+            ack = (String) CCsocket.readObject();
+            if (ack.equals("ack aggiunta porta")) {
+                System.out.println("porta aggiunta correttamente");
+                alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+                return true;
+            }
+        } else {
+            System.out.println("Errore rimozione email");
+            return false;
+        }        
+        return false;
     }
 
     private void bindingListW() {
@@ -187,11 +218,6 @@ public class ClientController implements Initializable {
 
             }
         });
-    }
-
-    private void listenerNewEmails() {
-        ClientThread cThread = new ClientThread(8080, this, clmodel, Client.getUserEmail());
-        cThread.start();
     }
 
 }
