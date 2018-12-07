@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 import model.DataModel;
 import model.Email;
 import model.SimpleEmail;
-import login.LoginController;
+import static util.Utility.alert;
 
 /**
  * FXML Controller class
@@ -65,7 +65,7 @@ public class ComposeController implements Initializable {
             ack = (String) socket.readObject();
             if (ack.equals("ack scrittura email")) {
                 System.out.println("mail inviata correttamente");
-                LoginController.alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
+                alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
             }
         } else {
             System.out.println("Errore invio email");

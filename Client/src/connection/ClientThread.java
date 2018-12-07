@@ -39,6 +39,10 @@ public class ClientThread extends Thread {
         this.emailClient = idClient;
     }
 
+    public int getPortaClient() {
+        return serverSocket.getLocalPort();
+    }
+    
     @Override
     public void run() {
 
