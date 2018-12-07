@@ -3,6 +3,7 @@ package model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -80,6 +81,41 @@ public class SimpleEmail implements Serializable {
     public String toString() {
         return "SimpleEmail{" + "id=" + id + ", mittente=" + mittente + ", destinatri=" + destinatri + ", oggetto=" + oggetto + ", testo=" + testo + ", data=" + data + '}';
     }
+
+  
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SimpleEmail other = (SimpleEmail) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!(this.mittente.equals(other.mittente))) {
+            return false;
+        }
+        if (!(this.oggetto.equals(other.oggetto))) {
+            return false;
+        }
+        if (!(this.testo.equals(other.testo))) {
+            return false;
+        }
+        if (!(this.destinatri.equals(other.destinatri))) {
+            return false;
+        }
+        if (!(this.data.equals(other.data))) {
+            return false;
+        }
+        return true;
+    }
+    
     
     
     
