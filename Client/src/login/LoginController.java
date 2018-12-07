@@ -46,9 +46,9 @@ public class LoginController implements Initializable {
                 String ack = (String) clsocketLogin.readObject();
                 if (ack.equals("ACK email login")) {
                     alert("Login effettuato", Alert.AlertType.INFORMATION);
-                    
+
                     //setto il socket
-                    Client.setClsocket(clsocketLogin); 
+                    Client.setClsocket(clsocketLogin);
                     Client.showEmailClient(loginMail);
                 } else {
                     alert("Errore login", Alert.AlertType.ERROR);
@@ -79,5 +79,10 @@ public class LoginController implements Initializable {
     public static void alert(String messaggio, Alert.AlertType type) {
         Alert alert = new Alert(type, messaggio);
         alert.showAndWait();
+    }
+
+    public static void alert(String messaggio, Alert.AlertType type, boolean NoWait) {
+        Alert alert = new Alert(type, messaggio);
+        alert.show();
     }
 }

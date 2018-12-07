@@ -47,7 +47,7 @@
                      </font>
                   </Text>
                   <Button fx:id="btSendEmail" layoutX="14.0" layoutY="314.0" mnemonicParsing="false" onAction="#sendEmail" text="Invia" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="8.0" />
-                  <Button fx:id="btGoBack" layoutX="598.0" layoutY="314.0" mnemonicParsing="false" onAction="#goBackHome" text="Annula (torna Home)" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="8.0" />
+                  <Button fx:id="btGoBack" layoutX="598.0" layoutY="314.0" mnemonicParsing="false" onAction="#goBackHome" text="Annula" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="8.0" />
                </children>
             </AnchorPane>
         </items>

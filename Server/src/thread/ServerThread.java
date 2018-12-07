@@ -2,7 +2,9 @@ package thread;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.ServerController;
@@ -19,12 +21,14 @@ public class ServerThread extends Thread {
     private ServerSocket server;
     private final ServerController controller;
     public static ArrayList<GestClienThread> socketList;
+    public static ArrayList<String> clientAttivi;
     private boolean exit = false;
 
     public ServerThread(ServerController c) {
         super();
         this.controller = c;
         socketList = new ArrayList<>(MAX_NUM_THREAD);
+        clientAttivi = new ArrayList<>(MAX_NUM_THREAD);
     }
 
     // Metodo richiamato una volta startato il thread
@@ -49,19 +53,18 @@ public class ServerThread extends Thread {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
             try {
-                if(socketList.size() < MAX_NUM_THREAD)
-                {
+                if (socketList.size() < MAX_NUM_THREAD) {
                     GestClienThread client = new GestClienThread(server.accept(), controller);
                     socketList.add(client);
                     client.start();
-                }
-                else
+                } else {
                     controller.printLog("Raggiunto numero massimo di conessioni disponibili");
-                
-            } catch (IOException ex) {  
+                }
+
+            } catch (IOException ex) {
                 controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore nella start del Server", ex);
-            } catch (NullPointerException exN) {                
+            } catch (NullPointerException exN) {
                 controller.printLog("Errore puntatore a null: " + exN.getMessage());
             }
         }
@@ -74,7 +77,7 @@ public class ServerThread extends Thread {
             exit = true;
             server.close();
             controller.printLog("Server chiusto correttamente");
-        } catch (IOException | NullPointerException ex ) {
+        } catch (IOException | NullPointerException ex) {
             controller.printLog("Errore nella chiusura del server sulla porta: " + NUM_PORTA + ". " + ex.getMessage());
         }
     }

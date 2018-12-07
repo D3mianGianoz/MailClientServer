@@ -1,19 +1,22 @@
 package client;
 
 import connection.ClientSocket;
+import connection.ClientThread;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import login.LoginController;
 import model.DataModel;
 import model.Email;
+import model.SimpleEmail;
 
 /**
  *
@@ -58,7 +61,7 @@ public class ClientController implements Initializable {
     @FXML
     void menuLogout(ActionEvent event) {
         Client.getClsocket().cls();
-        
+
         Client.showLoginView();
     }
 
@@ -82,13 +85,26 @@ public class ClientController implements Initializable {
         Client.showComposeEmail("ReplyAll");
     }
 
-    @FXML
+    @FXML         //TODO comunicazione al server della cancellazione dell ' email
     void onDelete(ActionEvent event) {
         Email emailToRemove = clmodel.getCurrentEmail();
-        
-        //TODO comunicazione al server della cancellazione dell ' email
-            
-        clmodel.remove(emailToRemove); 
+        CCsocket = Client.getClsocket();
+
+        CCsocket.sendObject("rimoviEmail");
+        String ack = (String) CCsocket.readObject();
+        if (ack.equals("rimovi email")) {
+            SimpleEmail toSend = emailToRemove.getSimpleEmail();
+            CCsocket.sendObject(toSend);
+            ack = (String) CCsocket.readObject();
+            if (ack.equals("ack rimozione email")) {
+                System.out.println("mail rimossa correttamente");
+                LoginController.alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+            }
+        } else {
+            System.out.println("Errore rimozione email");
+        }
+
+        clmodel.removeEmail(emailToRemove);
     }
 
     @Override
@@ -113,6 +129,9 @@ public class ClientController implements Initializable {
 
         //Binding dei campi Email
         bindingFields();
+        
+        //Lancio il Thread per le nuove Email
+        listenerNewEmails();
     }
 
     private void bindingListW() {
@@ -168,6 +187,11 @@ public class ClientController implements Initializable {
 
             }
         });
+    }
+
+    private void listenerNewEmails() {
+        ClientThread cThread = new ClientThread(8080, this, clmodel, Client.getUserEmail());
+        cThread.start();
     }
 
 }

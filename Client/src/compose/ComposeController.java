@@ -53,9 +53,10 @@ public class ComposeController implements Initializable {
     }
 //</editor-fold>
 
-    @FXML     //DI PROVA
+    @FXML     
     void sendEmail(ActionEvent event) {
         ClientSocket socket = Client.getClsocket();
+        
         socket.sendObject("invioEmail");
         String ack = (String) socket.readObject();
         if (ack.equals("manda email")) {
@@ -64,7 +65,7 @@ public class ComposeController implements Initializable {
             ack = (String) socket.readObject();
             if (ack.equals("ack scrittura email")) {
                 System.out.println("mail inviata correttamente");
-                LoginController.alert("Email inviata correttamente", Alert.AlertType.INFORMATION);
+                LoginController.alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
             }
         } else {
             System.out.println("Errore invio email");
@@ -73,7 +74,6 @@ public class ComposeController implements Initializable {
         Node source = (Node) event.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();
-
     }
 
     @FXML

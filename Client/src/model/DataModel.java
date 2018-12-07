@@ -34,8 +34,12 @@ public class DataModel {
         currentEmail.set(email);
     }
 
-    public void remove(Email emailR) {
+    public void removeEmail(Email emailR) {
         emailList.remove(emailR);
+    }
+    
+    public void addEmail(Email emailNew){
+        emailList.add(emailNew);
     }
 
 
