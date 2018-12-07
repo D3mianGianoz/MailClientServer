@@ -1,3 +1,0 @@
-Id:1,Mittente:dami,Destinatario/i:dami;dami;cubo;ewq,Oggetto:dsadasda,Testo:ssadddddddddddddddddddddddddddd,Data:2018-12-05
-Id:1,Mittente:ewq,Destinatario/i:dami;dami;dami;cubo;ewq,Oggetto:Re: dsadasda,Testo:Problema con i destinatari ? Data:2018-12-05
-Id:1,Mittente:ewq,Destinatario/i:dami;dami;dami;cubo;ewq,Oggetto:Re: dsadasda,Testo:Problema con i destinatari ? Data:2018-12-05
