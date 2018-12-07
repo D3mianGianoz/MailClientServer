@@ -91,6 +91,10 @@ public class GestClienThread extends Thread {
                 case "invioEmail":
                     gestisciInvioEmail();
                     break;
+                    
+                case "rimuoviEmail":
+                    gestisciDeleteEmail();
+                    break;
 
                 // Esco e blocco il ciclo infinito e mi rimuvo dalla lista
                 case "exit":
@@ -99,6 +103,38 @@ public class GestClienThread extends Thread {
             }
         }
 
+    }
+    
+    private void gestisciDeleteEmail()
+    {
+        try {
+            // Dico al client di inviarmi la email da eliminare
+            out.writeObject("rimuovi email");
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile inviare messaggio di risposta al client: "+ex.getMessage());
+        }
+        SimpleEmail deleteEmail = null;
+        try {
+            deleteEmail = (SimpleEmail)in.readObject();
+        } catch (IOException ex) {
+            controller.printLog("Impossibile ricevere la email da cancellare: "+ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            controller.printLog(ex.getMessage());
+        }
+        
+        // Recupero la lista delle email del client stesso
+        ArrayList<SimpleEmail> el = readEmailFile(this.clientFile);
+        el.remove(deleteEmail); // TODO REMOVE NON FUNZIONA 
+        
+        // Dopo aver tolto la email riscrivo il file con la nuova lista
+        writeFile(this.clientFile, el);
+        
+        try {
+            out.writeObject("ack rimozione email");
+            controller.printLog("Email del client: "+this.emailClient + " cancellata correttamente");
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile inviare messaggio di risposta al client: "+ex.getMessage());
+        }
     }
 
     private void gestsciLogin() {
@@ -240,62 +276,6 @@ public class GestClienThread extends Thread {
     }
 
     private void getMyEmails() {
-        /*
-        BufferedReader br = null;
-        ArrayList<SimpleEmail> emaiList = new ArrayList<>();
-        FileChannel fch = null;
-        try {
-            // Creo bufferedReader per leggere dal file
-            br = new BufferedReader(new FileReader(this.clientFile));
-            fch = FileChannel.open(this.clientFile.toPath(), StandardOpenOption.READ);
-        } catch (FileNotFoundException ex) {
-            controller.printLog("File del client: " + this.emailClient + " non trovato");
-        } catch (IOException ex) {
-            Logger.getLogger(GestClienThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            // Acquisico il lock shadre per la lettura del file
-            FileLock lock = fch.lock(0, fch.size(), true);
-
-            // Controllo che il file non sia vuoto            
-            String st;
-            if (this.clientFile.length() == 0) {
-                out.writeObject(emaiList); // Se il file è vuoto ritorno al client un arraylist di email vuoto
-            } else {
-                while ((st = br.readLine()) != null) {
-                    // Splitto in parametri
-                    String[] params = st.split(",");
-                    String[] valori = new String[params.length];
-
-                    // Mi recupero i valori dei parametri
-                    for (int i = 0; i < params.length; i++) {
-                        String[] temp = params[i].split(":");
-                        valori[i] = temp[1];
-                    }
-
-                    // Creo l' arraylist dei destinatari
-                    ArrayList<String> dest = new ArrayList<>();
-                    String[] destString = valori[2].split(";");
-                    dest.addAll(Arrays.asList(destString));
-
-                    emaiList.add(new SimpleEmail(Integer.parseInt(valori[0]), valori[1], dest, valori[3], valori[4], LocalDate.parse(valori[5], DateTimeFormatter.ISO_DATE)));
-                }
-
-                out.writeObject(emaiList);
-                out.flush();
-            }
-        } catch (IOException ex) {
-            controller.printLog("Errore: " + ex.getMessage());
-        } finally {
-            try {
-                // Chiudo il buffer e rilascio il lock
-                br.close();
-                fch.close();
-            } catch (IOException ex) {
-                controller.printLog("Errore nella chiusura del file per la lettura delle email");
-            }
-        }
-        */
         
         ArrayList<SimpleEmail> ret = readEmailFile(this.clientFile);
         try {
@@ -349,6 +329,7 @@ public class GestClienThread extends Thread {
 
         try {
             out.writeObject("ack scrittura email");
+            controller.printLog("Email ricevuta correttamente dal client: "+this.emailClient);
         } catch (IOException ex) {
             controller.printLog("Errore risposta client");
         }
@@ -362,58 +343,6 @@ public class GestClienThread extends Thread {
 
     public String getEmailFromSocket() {
         return this.emailClient;
-    }
-
-    private void scrivoEmailFile(String dest, SimpleEmail email, ArrayList<String> destinatari) {
-        FileChannel fch = null;
-        try {
-            // Apro il file corrispondente al destinatario
-            // Se c'è un nuovo destinatario creo il nuo
-            File f = new File("EmailFiles/" + dest + ".txt");
-            if (!f.exists()) {
-                try {
-                    f.createNewFile();
-                } catch (IOException ex) {
-                    controller.printLog("Errore creazione nuovo file per destinatario");
-                }
-            }
-
-            // Recupero il file su cui devo scrivere 
-            fch = FileChannel.open(f.toPath(), StandardOpenOption.WRITE, StandardOpenOption.APPEND);
-            // Mi posiziono in fondo al file
-            fch.position(fch.size() - 1);
-            // Acquisisco il lock esclusivo per il file
-            FileLock lock = fch.lock();
-
-            // Creo la stringa da scrivere e la trasformo in un bytebuffer
-            String strToWrite = "Id:" + email.getId() + ",Mittente:" + email.getMittente() + ",Destinatario/i:" + getDestinatari(destinatari) + ",Oggetto:" + email.getOggetto() + ",Testo:" + email.getTesto() + ",Data:" + email.getData().format(DateTimeFormatter.ISO_DATE) + "\n";
-            ByteBuffer buffer = ByteBuffer.wrap(strToWrite.getBytes());
-
-            // Scrivo sul file
-            fch.write(buffer);
-
-            /*
-            BufferedWriter bw = null;
-            try {
-                bw = new BufferedWriter(new FileWriter(f, true));
-            } catch (IOException ex) {
-                controller.printLog("Impossibile aprire il bufferedWriter");
-            } */
-            controller.printLog("EMAIL SCRITTA SU FILE: Id:" + email.getId() + ",Mittente:" + email.getMittente() + ",Destinatario/i:" + getDestinatari(destinatari) + ",Oggetto:" + email.getOggetto() + ",Testo:" + email.getTesto() + ",Data:" + email.getData().format(DateTimeFormatter.ISO_DATE));
-
-            //bw.write("Id:"+email.getId()+",Mittente:"+email.getMittente()+",Destinatario/i:"+getDestinatari(destinatari)+",Oggetto:"+email.getOggetto()+",Testo:"+email.getTesto()+",Data:"+email.getData().format(DateTimeFormatter.ISO_DATE)+"\n");                       
-            //bw.close();
-            //controller.printLog("Email ricevuto dal client "+this.emailClient);
-        } catch (IOException ex) {
-            Logger.getLogger(GestClienThread.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                // Rilascio il lock esclusivo del file
-                fch.close();
-            } catch (IOException ex) {
-                controller.printLog(ex.getMessage());
-            }
-        }
     }
 
     private void mandoEmailClient(String dest, SimpleEmail email, ArrayList<String> destinatari) {
