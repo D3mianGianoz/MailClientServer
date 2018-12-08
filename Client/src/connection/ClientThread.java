@@ -10,11 +10,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DataModel;
-import model.SimpleEmail;
 
 /**
  *
@@ -23,7 +21,6 @@ import model.SimpleEmail;
 public class ClientThread extends Thread {
 
     private ServerSocket serverSocket;
-    private Socket clientSocket;
     private final int NUM_PORTA;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -40,79 +37,21 @@ public class ClientThread extends Thread {
     }
 
     public int getPortaClient() {
-        return serverSocket.getLocalPort();
-    }
-    
-    @Override
-    public void run() {
-
         try {
             serverSocket = new ServerSocket(NUM_PORTA);
         } catch (IOException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nell' apertura sulla porta: " + NUM_PORTA, ex);
         }
 
-        try {
-            Socket accept = serverSocket.accept();
-            if (accept != null) {
-                this.clientSocket = accept;
-            } else {
-                throw new NullPointerException();
-            }
-        } catch (IOException | NullPointerException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nell' accettazione del server", ex);
-        }
-
-        getStreams();
-
-        listenAndTask();
+        return serverSocket.getLocalPort();
     }
 
-    private void getStreams() {
-        try {
-            in = new ObjectInputStream(clientSocket.getInputStream());
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-        } catch (IOException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nella creazione degli Streams", ex);
-        }
-    }
-
-    private void listenAndTask() {
-
-        String request = "";
+    @Override
+    public void run() {
         while (true) {
-            request = "";
-            try {
-                request = in.readUTF();
-            } catch (IOException ex) {
-                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nella ricezione della stringa di richiesta", ex);
-            }
-            switch (request) {
-                case "pushEmail":
-                    addNewEmail();
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void addNewEmail() {
-        try {
-            out.writeUTF("ACK push");
-        } catch (IOException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nell' invio del ACK", ex);
-        }
-
-        try {
-            SimpleEmail email = (SimpleEmail) in.readObject();
-            ClientTask task = new ClientTask(controller, thModel, email);
+            AcceptTask task = new AcceptTask(serverSocket, controller, thModel);
             Thread t = new Thread(task);
             t.start();
-
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nella ricezione dell' Email", ex);
         }
     }
 }

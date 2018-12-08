@@ -17,6 +17,7 @@ import model.DataModel;
 import model.Email;
 import model.SimpleEmail;
 import static util.Utility.alert;
+import static util.Utility.alertConf;
 
 /**
  *
@@ -87,27 +88,31 @@ public class ClientController implements Initializable {
 
     @FXML         //TODO comunicazione al server della cancellazione dell ' email
     void onDelete(ActionEvent event) {
-        Email emailToRemove = clmodel.getCurrentEmail();
+        if (alertConf("Sei sicuro di volere cancellare l'email ?", Alert.AlertType.CONFIRMATION)) {
+            Email emailToRemove = clmodel.getCurrentEmail();
 
-        CCsocket.sendObject("rimuoviEmail");
-        String ack = (String) CCsocket.readObject();
-        if (ack.equals("rimuovi email")) {
-            SimpleEmail toSend = emailToRemove.getSimpleEmail();
-            CCsocket.sendObject(toSend);
-            ack = (String) CCsocket.readObject();
-            if (ack.equals("ack rimozione email")) {
-                System.out.println("mail rimossa correttamente");
-                alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+            CCsocket.sendObject("rimuoviEmail");
+            String ack = (String) CCsocket.readObject();
+            if (ack.equals("rimuovi email")) {
+                SimpleEmail toSend = emailToRemove.getSimpleEmail();
+                CCsocket.sendObject(toSend);
+                ack = (String) CCsocket.readObject();
+                if (ack.equals("ack rimozione email")) {
+                    System.out.println("mail rimossa correttamente");
+                    alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+                } else {
+                    alert("Delete Email fallita", Alert.AlertType.ERROR);
+                    return;
+                }
             } else {
-                alert("Delete Email fallita", Alert.AlertType.ERROR);
+                System.out.println("Errore di comunicazione");
                 return;
             }
-        } else {
-            System.out.println("Errore di comunicazione");
-            return;
-        }
 
-        clmodel.removeEmail(emailToRemove);
+            clmodel.removeEmail(emailToRemove);
+        } else {
+            System.out.println("Canc annullata");
+        }
     }
 
     @Override
@@ -141,27 +146,32 @@ public class ClientController implements Initializable {
     private void listenerNewEmails() {
         ClientThread cThread = new ClientThread(0, this, clmodel, Client.getUserEmail());
         int portaVariabile = cThread.getPortaClient();
-        if (sendPorta(portaVariabile))
-            cThread.start();
-        else
+        if (sendPortaUser(portaVariabile)) {
+            alert("Porta Mandata con successo", Alert.AlertType.INFORMATION, true);
+            //cThread.start();
+        } else {
             alert("Could not sync with server", Alert.AlertType.ERROR);
+        }
     }
 
-    private boolean sendPorta(int porta) {
+    private boolean sendPortaUser(int porta) {
         CCsocket.sendObject("aggiungiPorta");
         String ack = (String) CCsocket.readObject();
         if (ack.equals("aggiungi porta")) {
             CCsocket.sendObject(porta);
             ack = (String) CCsocket.readObject();
             if (ack.equals("ack aggiunta porta")) {
-                System.out.println("porta aggiunta correttamente");
-                alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
-                return true;
+                CCsocket.sendObject(Client.getUserEmail());
+                ack = (String) CCsocket.readObject();
+                if (ack.equals("ack aggiunto user; END")) {
+                    System.out.println("porta e user aggiunti correttamente");
+                    return true;
+                }
             }
         } else {
-            System.out.println("Errore rimozione email");
+            System.out.println("Errore creazione sync email");
             return false;
-        }        
+        }
         return false;
     }
 

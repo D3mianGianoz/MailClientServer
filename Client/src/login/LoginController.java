@@ -55,25 +55,28 @@ public class LoginController implements Initializable {
                     alert("Errore login", Alert.AlertType.ERROR);
                 }
             } else {
-                System.out.println("Errore nella rispota del login al server");
+                System.out.println("Errore nella risposta del login al server");
             }
         } catch (NullPointerException ex) {
             //Gestione Login Fallito
-            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Gestione Login non riuscita", ex.getCause());
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Gestione Login non riuscita", ex.getMessage());
             alert("Login Fallito, Riprovare", Alert.AlertType.ERROR);
         }
     }
 
-    /**
-     * Initializes the controller class.
-     *
-     * @param url
-     * @param rb
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+        /**
+         * Initializes the controller class.
+         *
+         * @param url
+         * @param rb
+         */
+        @Override
+        public void initialize
+        (URL url, ResourceBundle rb
+        
+            ) {
         assert btnLogin != null : "fx:id=\"btnLogin\" was not injected: check your FXML file 'Login.fxml'.";
-        assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'Login.fxml'.";
-    }
+            assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'Login.fxml'.";
+        }
 
-}
+    }

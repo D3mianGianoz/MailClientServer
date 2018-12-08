@@ -50,8 +50,9 @@ public class Client extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if (clSocket != null)
+                if (clSocket != null) {
                     clSocket.cls();
+                }
                 Platform.exit();
                 System.exit(0);
             }
@@ -89,11 +90,11 @@ public class Client extends Application {
             coreModel.loadData(clSocket);
             //Logger.getLogger(Client.class.getName()).log(Level.FINE, "Carico il data Model con queste Email", coreModel.toString());
 
-            //faccio partire il controller
-            controller.initModel(coreModel);
-
             //mi salvo l'email del client
             userEmail = email;
+
+            //faccio partire il controller
+            controller.initModel(coreModel);
 
             Scene sceneEm = new Scene(ClientPane);
             primaryStage.setTitle("Client Email di " + userEmail);

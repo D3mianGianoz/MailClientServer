@@ -3,6 +3,7 @@ package thread;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.ServerController;
@@ -19,14 +20,14 @@ public class ServerThread extends Thread {
     private ServerSocket server;
     private final ServerController controller;
     public static ArrayList<GestClienThread> socketList;
-    public static ArrayList<String> clientAttivi;
+    public static HashMap<String, Integer> clientList;
     private boolean exit = false;
 
     public ServerThread(ServerController c) {
         super();
         this.controller = c;
         socketList = new ArrayList<>(MAX_NUM_THREAD);
-        clientAttivi = new ArrayList<>(MAX_NUM_THREAD);
+        clientList = new HashMap<>(MAX_NUM_THREAD);
     }
 
     // Metodo richiamato una volta startato il thread

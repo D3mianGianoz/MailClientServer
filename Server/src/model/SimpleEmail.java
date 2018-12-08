@@ -110,13 +110,19 @@ public class SimpleEmail implements Serializable {
         if (!(this.destinatri.equals(other.destinatri))) {
             return false;
         }
-        if (!(this.data.equals(other.data))) {
-            return false;
-        }
-        return true;
+        return this.data.equals(other.data);
     }
-    
-    
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.id;
+        hash = 67 * hash + Objects.hashCode(this.mittente);
+        hash = 67 * hash + Objects.hashCode(this.destinatri);
+        hash = 67 * hash + Objects.hashCode(this.oggetto);
+        hash = 67 * hash + Objects.hashCode(this.testo);
+        hash = 67 * hash + Objects.hashCode(this.data);
+        return hash;
+    }
     
 }

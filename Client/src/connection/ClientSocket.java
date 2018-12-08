@@ -59,4 +59,22 @@ public class ClientSocket {
         }
         return null;
     }
+    
+    public void sendString(String str){
+        try {
+            out.writeUTF(str);
+            out.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client : fallito invio della stringa: " + str, ex);
+        }
+    }
+    
+    public String readString(){
+        try {
+            return in.readUTF();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client : fallito ricezione String", ex);
+        }
+        return "Error Error Error";
+    }
 }
