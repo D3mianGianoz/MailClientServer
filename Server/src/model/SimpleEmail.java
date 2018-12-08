@@ -45,7 +45,7 @@ public class SimpleEmail implements Serializable {
         this.mittente = mittente;
     }
 
-    public ArrayList<String> getDestinatri() {
+    public ArrayList<String> getDestinatari() {
         return destinatri;
     }
 

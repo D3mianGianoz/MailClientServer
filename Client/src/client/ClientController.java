@@ -28,6 +28,8 @@ public class ClientController implements Initializable {
     private ClientSocket CCsocket;
 
     private DataModel clmodel;
+    
+    private String userEmail;
 
 //Binding tra Controller e View
 //<editor-fold defaultstate="collapsed" desc="FXML declaration">
@@ -58,6 +60,7 @@ public class ClientController implements Initializable {
     @FXML
     private Button btReply;
 //</editor-fold>
+    
 
     @FXML
     void menuLogout(ActionEvent event) {
@@ -86,19 +89,18 @@ public class ClientController implements Initializable {
         Client.showComposeEmail("ReplyAll");
     }
 
-    @FXML         //TODO comunicazione al server della cancellazione dell ' email
+    @FXML         
     void onDelete(ActionEvent event) {
         if (alertConf("Sei sicuro di volere cancellare l'email ?", Alert.AlertType.CONFIRMATION)) {
             Email emailToRemove = clmodel.getCurrentEmail();
 
             CCsocket.sendObject("rimuoviEmail");
-            String ack = (String) CCsocket.readObject();
+            String ack = CCsocket.readString();
             if (ack.equals("rimuovi email")) {
                 SimpleEmail toSend = emailToRemove.getSimpleEmail();
                 CCsocket.sendObject(toSend);
-                ack = (String) CCsocket.readObject();
+                ack = CCsocket.readString();
                 if (ack.equals("ack rimozione email")) {
-                    System.out.println("mail rimossa correttamente");
                     alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
                 } else {
                     alert("Delete Email fallita", Alert.AlertType.ERROR);
@@ -132,6 +134,7 @@ public class ClientController implements Initializable {
 
         this.clmodel = model;
         CCsocket = Client.getClsocket();
+        this.userEmail = Client.getUserEmail();
 
         //Binding Lista
         bindingListW();
@@ -144,11 +147,10 @@ public class ClientController implements Initializable {
     }
 
     private void listenerNewEmails() {
-        ClientThread cThread = new ClientThread(0, this, clmodel, Client.getUserEmail());
+        ClientThread cThread = new ClientThread(0, this, this.userEmail);
         int portaVariabile = cThread.getPortaClient();
         if (sendPortaUser(portaVariabile)) {
-            alert("Porta Mandata con successo", Alert.AlertType.INFORMATION, true);
-            //cThread.start();
+            cThread.start();
         } else {
             alert("Could not sync with server", Alert.AlertType.ERROR);
         }
@@ -156,13 +158,13 @@ public class ClientController implements Initializable {
 
     private boolean sendPortaUser(int porta) {
         CCsocket.sendObject("aggiungiPorta");
-        String ack = (String) CCsocket.readObject();
+        String ack = CCsocket.readString();
         if (ack.equals("aggiungi porta")) {
             CCsocket.sendObject(porta);
-            ack = (String) CCsocket.readObject();
+            ack = CCsocket.readString();
             if (ack.equals("ack aggiunta porta")) {
                 CCsocket.sendObject(Client.getUserEmail());
-                ack = (String) CCsocket.readObject();
+                ack = CCsocket.readString();
                 if (ack.equals("ack aggiunto user; END")) {
                     System.out.println("porta e user aggiunti correttamente");
                     return true;
@@ -173,6 +175,12 @@ public class ClientController implements Initializable {
             return false;
         }
         return false;
+    }
+    
+    public void addEmail(Email toAdd){
+        clmodel.addEmail(toAdd);
+        alert("Nuova Email per" + this.userEmail + "!", Alert.AlertType.INFORMATION, true);
+        System.out.println("Email correttamente aggiunta");
     }
 
     private void bindingListW() {

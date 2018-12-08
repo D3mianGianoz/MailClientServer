@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package compose;
 
 import client.Client;
@@ -37,6 +32,7 @@ public class ComposeController implements Initializable {
     private DataModel cmpModel;
     private Email selectedEmail;
     private String accountName;
+    private int IdnewEmail;
 
 //<editor-fold defaultstate="collapsed" desc="FXML declaration">
     @FXML
@@ -53,22 +49,25 @@ public class ComposeController implements Initializable {
     }
 //</editor-fold>
 
-    @FXML     
+    @FXML
     void sendEmail(ActionEvent event) {
         ClientSocket socket = Client.getClsocket();
-        
-        socket.sendObject("invioEmail");
-        String ack = (String) socket.readObject();
-        if (ack.equals("manda email")) {
-            SimpleEmail toSend = newEmail();
-            socket.sendObject(toSend);
-            ack = (String) socket.readObject();
-            if (ack.equals("ack scrittura email")) {
-                System.out.println("mail inviata correttamente");
-                alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
-            }
-        } else {
-            System.out.println("Errore invio email");
+
+        try {
+
+            socket.sendObject("invioEmail");
+            String ack = socket.readString();
+            if (ack.equals("manda email")) {
+                SimpleEmail toSend = newEmail();
+                socket.sendObject(toSend);
+                ack = socket.readString();;
+                if (ack.equals("ack scrittura email")) {
+                    System.out.println("mail inviata correttamente");
+                    alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
+                }
+            } 
+        } catch (NullPointerException ex) {
+            alert("Fallito invio email, Server Offline ?", Alert.AlertType.ERROR);
         }
 
         Node source = (Node) event.getSource();
@@ -103,19 +102,23 @@ public class ComposeController implements Initializable {
 
         this.cmpModel = model;
         selectedEmail = cmpModel.getCurrentEmail();
-        if (selectedEmail != null || !action.equals("New Email"))
+        if (selectedEmail != null || !action.equals("New Email")) {
             Logger.getLogger(Client.class.getName()).log(Level.FINE, "Email selezionata \n{0}\n{1}", new Object[]{selectedEmail.getMittente(), action});
+        }
         accountName = Client.getUserEmail();
-
+        IdnewEmail = 10;
+        
         switch (action) {
             case "Reply":
                 txtDestinatarioNw.setText(selectedEmail.getMittente() + ";");
                 txtOggettoNw.setText("Re: " + selectedEmail.getOggetto());
+                txtTestoNw.setText("\n\n\n --------- Messaggio originale --------- \n" + selectedEmail.getTesto());
                 break;
 
             case "ReplyAll":
                 txtDestinatarioNw.setText(selectedEmail.getDestinatari());
                 txtOggettoNw.setText("Re: " + selectedEmail.getOggetto());
+                txtTestoNw.setText("\n\n\n --------- Messaggio originale --------- \n" + selectedEmail.getTesto());
                 break;
 
             case "Foward":
@@ -132,7 +135,8 @@ public class ComposeController implements Initializable {
         ArrayList<String> destinatari = new ArrayList<>(asList);
         String oggetto = txtOggettoNw.getText();
         String testo = txtTestoNw.getText();
+        
 
-        return new SimpleEmail(1, mittente, destinatari, oggetto, testo, LocalDate.now());
+        return new SimpleEmail(IdnewEmail++, mittente, destinatari, oggetto, testo, LocalDate.now());
     }
 }

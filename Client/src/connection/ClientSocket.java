@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package connection;
 
 import java.io.IOException;
@@ -59,20 +54,20 @@ public class ClientSocket {
         }
         return null;
     }
-    
-    public void sendString(String str){
+
+    public void sendString(String str) {
         try {
-            out.writeUTF(str);
+            out.writeObject(str);
             out.flush();
         } catch (IOException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client : fallito invio della stringa: " + str, ex);
         }
     }
-    
-    public String readString(){
+
+    public String readString() {
         try {
-            return in.readUTF();
-        } catch (IOException ex) {
+            return (String) in.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Client : fallito ricezione String", ex);
         }
         return "Error Error Error";

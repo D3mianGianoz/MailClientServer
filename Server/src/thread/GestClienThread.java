@@ -20,7 +20,7 @@ import util.MailSocket;
 
 /**
  *
- * @author alberto
+ * @author Alberto Costamagna , Damiano Gianotti
  */
 public class GestClienThread extends Thread {
 
@@ -151,7 +151,7 @@ public class GestClienThread extends Thread {
         }
 
         // Controllo se la mail del client è nuova o il suo file con le email precedenti esiste
-        clientFile = new File("EmailFiles\\" + emailClient + ".dat");
+        clientFile = new File("EmailFiles/" + emailClient + ".dat");
         if (!clientFile.exists()) {
             try {
                 // Creo il file per il client
@@ -297,7 +297,7 @@ public class GestClienThread extends Thread {
         }
 
         // Recupero i destinatri della email
-        ArrayList<String> destinatari = email.getDestinatri();
+        ArrayList<String> destinatari = email.getDestinatari();
 
         // Per ogni destinatario vado a scrivere la mail nel rispettivo file
         for (String dest : destinatari) {
@@ -306,7 +306,7 @@ public class GestClienThread extends Thread {
             if (!fileDest.exists()) {
                 try {
                     fileDest.createNewFile();
-                    writeFile(fileDest, new ArrayList<SimpleEmail>());
+                    writeFile(fileDest, new ArrayList<>());
                 } catch (IOException ex) {
                     controller.printLog("Impossibile creare nuovo file per i destinantari: " + ex.getMessage());
                 }
@@ -315,7 +315,7 @@ public class GestClienThread extends Thread {
             prevEmail.add(email);
             writeFile(fileDest, prevEmail);
             if (clientList.containsKey(dest)) {
-                //mandoEmailClient(dest, email, destinatari);
+                mandoEmailClient(dest, email, destinatari);
             }
         }
 
@@ -354,8 +354,10 @@ public class GestClienThread extends Thread {
     }
 
     private void mandoEmailClient(String dest, SimpleEmail email, ArrayList<String> destinatari) {
+        
         int nPorta = clientList.get(dest);
         MailSocket mailsocket = new MailSocket(controller, nPorta);
+        
         mailsocket.sendString("pushEmail");
         String ack = mailsocket.readString();
         if (ack.equals("ACK push")) {
