@@ -12,6 +12,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import model.SimpleEmail;
 import server.ServerController;
 import static thread.ServerThread.clientList;
@@ -30,6 +31,7 @@ public class GestClienThread extends Thread {
     private ObjectOutputStream out;
     private String emailClient;
     private File clientFile;
+    private final AtomicBoolean runningT = new AtomicBoolean(false);
 
     // Mappa dei client connessi in quel momento
     // Invio la mail tramite il socket solo ai client connessi, altrimento scrivo solo sul loro file
@@ -38,7 +40,7 @@ public class GestClienThread extends Thread {
         this.clientFile = null;
         this.socket = r;
         this.controller = c;
-        //this.clientList = clients;
+        runningT.set(true);
         try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
@@ -52,14 +54,14 @@ public class GestClienThread extends Thread {
         }
     }
 
-    // VERSIONE DI PROVA
     @Override
     public void run() {
-
-        while (true) {
+        
+        while (runningT.get()) {
+            
             String richiesta = "";
             try {
-                richiesta = (String) in.readObject();
+                richiesta = (String) in.readObject();  //Operazione bloccante
             } catch (IOException ex) {
                 controller.printLog("Errore nella ricezione della stringa di richiesta dal client");
             } catch (ClassNotFoundException ex) {
@@ -90,9 +92,11 @@ public class GestClienThread extends Thread {
                     break;
 
                 // Esco e blocco il ciclo infinito e mi rimuvo dalla lista
+                // test con atomicBoolean, forse meglio del return
                 case "exit":
                     gestisciLogout();
-                    return;
+                    runningT.set(false);
+                    break;
             }
         }
 
@@ -171,8 +175,6 @@ public class GestClienThread extends Thread {
             controller.printLog("Errore ack email login");
         }
 
-        //Login compiuto con successo, aggiungo alla lista di client attivi
-        //ServerThread.clientAttivi.add(this.emailClient);
         controller.printLog("Client " + this.emailClient + " connesso");
 
     }
@@ -351,6 +353,10 @@ public class GestClienThread extends Thread {
 
     public String getEmailFromSocket() {
         return this.emailClient;
+    }
+    
+    public void serverExit(){
+        runningT.set(false);
     }
 
     private void mandoEmailClient(String dest, SimpleEmail email, ArrayList<String> destinatari) {

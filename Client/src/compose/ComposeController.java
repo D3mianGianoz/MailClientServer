@@ -52,9 +52,8 @@ public class ComposeController implements Initializable {
     @FXML
     void sendEmail(ActionEvent event) {
         ClientSocket socket = Client.getClsocket();
-
-        try {
-
+        
+        if (!socket.isClosed()) { //Non basta
             socket.sendObject("invioEmail");
             String ack = socket.readString();
             if (ack.equals("manda email")) {
@@ -65,14 +64,15 @@ public class ComposeController implements Initializable {
                     System.out.println("mail inviata correttamente");
                     alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
                 }
-            } 
-        } catch (NullPointerException ex) {
-            alert("Fallito invio email, Server Offline ?", Alert.AlertType.ERROR);
-        }
+            }
+            
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+            stage.close();
 
-        Node source = (Node) event.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
+        } else {
+            alert("Fallito invio email, Server Offline ", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -102,12 +102,14 @@ public class ComposeController implements Initializable {
 
         this.cmpModel = model;
         selectedEmail = cmpModel.getCurrentEmail();
+
         if (selectedEmail != null || !action.equals("New Email")) {
-            Logger.getLogger(Client.class.getName()).log(Level.FINE, "Email selezionata \n{0}\n{1}", new Object[]{selectedEmail.getMittente(), action});
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.FINE, "Email selezionata \n{0}\n{1}", new Object[]{selectedEmail.getMittente(), action});
         }
         accountName = Client.getUserEmail();
         IdnewEmail = 10;
-        
+
         switch (action) {
             case "Reply":
                 txtDestinatarioNw.setText(selectedEmail.getMittente() + ";");
@@ -135,7 +137,6 @@ public class ComposeController implements Initializable {
         ArrayList<String> destinatari = new ArrayList<>(asList);
         String oggetto = txtOggettoNw.getText();
         String testo = txtTestoNw.getText();
-        
 
         return new SimpleEmail(IdnewEmail++, mittente, destinatari, oggetto, testo, LocalDate.now());
     }

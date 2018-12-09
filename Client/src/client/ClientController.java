@@ -65,7 +65,6 @@ public class ClientController implements Initializable {
     @FXML
     void menuLogout(ActionEvent event) {
         Client.getClsocket().cls();
-
         Client.showLoginView();
     }
 
@@ -179,7 +178,7 @@ public class ClientController implements Initializable {
     
     public void addEmail(Email toAdd){
         clmodel.addEmail(toAdd);
-        alert("Nuova Email per" + this.userEmail + "!", Alert.AlertType.INFORMATION, true);
+        alert("Nuova Email per: " + this.userEmail + "!", Alert.AlertType.INFORMATION, true);
         System.out.println("Email correttamente aggiunta");
     }
 

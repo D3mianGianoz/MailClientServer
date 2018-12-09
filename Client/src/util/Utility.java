@@ -23,6 +23,7 @@ public class Utility {
 
     public static void alert(String messaggio, Alert.AlertType type, boolean NoWait) {
         Alert alert = new Alert(type, messaggio);
+        alert.setTitle("Notifica");
         alert.show();
     }
 

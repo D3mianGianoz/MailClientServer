@@ -64,19 +64,16 @@ public class LoginController implements Initializable {
         }
     }
 
-        /**
-         * Initializes the controller class.
-         *
-         * @param url
-         * @param rb
-         */
-        @Override
-        public void initialize
-        (URL url, ResourceBundle rb
-        
-            ) {
+    /**
+     * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
         assert btnLogin != null : "fx:id=\"btnLogin\" was not injected: check your FXML file 'Login.fxml'.";
-            assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'Login.fxml'.";
-        }
-
+        assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'Login.fxml'.";
     }
+
+}

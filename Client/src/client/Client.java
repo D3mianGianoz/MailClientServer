@@ -43,7 +43,6 @@ public class Client extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
-        primaryStage.setTitle("Effetua il Login! ");
         showLoginView();
 
         //Se chiudo il client chiudo tutto anche il socket
@@ -60,6 +59,7 @@ public class Client extends Application {
     }
 
     protected static void showLoginView() {
+        primaryStage.setTitle("Effetua il Login! ");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("/login/Login.fxml"));
         try {
