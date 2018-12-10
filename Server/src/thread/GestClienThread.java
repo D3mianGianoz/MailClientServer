@@ -21,7 +21,7 @@ import util.MailSocket;
 
 /**
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
 public class GestClienThread extends Thread {
 
@@ -102,36 +102,7 @@ public class GestClienThread extends Thread {
 
     }
 
-    private void gestisciDeleteEmail() {
-        try {
-            // Dico al client di inviarmi la email da eliminare
-            out.writeObject("rimuovi email");
-        } catch (IOException ex) {
-            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
-        }
-        SimpleEmail deleteEmail = null;
-        try {
-            deleteEmail = (SimpleEmail) in.readObject();
-        } catch (IOException ex) {
-            controller.printLog("Impossibile ricevere la email da cancellare: " + ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            controller.printLog(ex.getMessage());
-        }
-
-        // Recupero la lista delle email del client stesso
-        ArrayList<SimpleEmail> el = readEmailFile(this.clientFile);
-        el.remove(deleteEmail); // TODO REMOVE NON FUNZIONA 
-
-        // Dopo aver tolto la email riscrivo il file con la nuova lista
-        writeFile(this.clientFile, el);
-
-        try {
-            out.writeObject("ack rimozione email");
-            controller.printLog("Email del client: " + this.emailClient + " cancellata correttamente");
-        } catch (IOException ex) {
-            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
-        }
-    }
+    
 
     private void gestsciLogin() {
         // Scrivo al client che accetto la sua richiesta di login
@@ -177,6 +148,37 @@ public class GestClienThread extends Thread {
 
         controller.printLog("Client " + this.emailClient + " connesso");
 
+    }
+    
+    private void gestisciDeleteEmail() {
+        try {
+            // Dico al client di inviarmi la email da eliminare
+            out.writeObject("rimuovi email");
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
+        }
+        SimpleEmail deleteEmail = null;
+        try {
+            deleteEmail = (SimpleEmail) in.readObject();
+        } catch (IOException ex) {
+            controller.printLog("Impossibile ricevere la email da cancellare: " + ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            controller.printLog(ex.getMessage());
+        }
+
+        // Recupero la lista delle email del client stesso
+        ArrayList<SimpleEmail> el = readEmailFile(this.clientFile);
+        el.remove(deleteEmail); 
+
+        // Dopo aver tolto la email riscrivo il file con la nuova lista
+        writeFile(this.clientFile, el);
+
+        try {
+            out.writeObject("ack rimozione email");
+            controller.printLog("Email del client: " + this.emailClient + " cancellata correttamente");
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
+        }
     }
 
     private void writeFile(File f, ArrayList<SimpleEmail> el) {
@@ -226,7 +228,6 @@ public class GestClienThread extends Thread {
         FileChannel fch = null;
         FileInputStream fi = null;
         ObjectInputStream oi = null;
-        //non so se va bene
         ArrayList<SimpleEmail> ret = null;
 
         try {
@@ -317,7 +318,7 @@ public class GestClienThread extends Thread {
             prevEmail.add(email);
             writeFile(fileDest, prevEmail);
             if (clientList.containsKey(dest)) {
-                mandoEmailClient(dest, email, destinatari);
+                mandoEmailClient(dest, email);
             }
         }
 
@@ -359,7 +360,7 @@ public class GestClienThread extends Thread {
         runningT.set(false);
     }
 
-    private void mandoEmailClient(String dest, SimpleEmail email, ArrayList<String> destinatari) {
+    private void mandoEmailClient(String dest, SimpleEmail email) {
         
         int nPorta = clientList.get(dest);
         MailSocket mailsocket = new MailSocket(controller, nPorta);
@@ -379,7 +380,8 @@ public class GestClienThread extends Thread {
         }
         mailsocket.cls();
     }
-
+    
+    /*
     private String getDestinatari(ArrayList<String> dest) {
         String ret = dest.get(0);
         if (dest.size() > 1) {
@@ -388,6 +390,6 @@ public class GestClienThread extends Thread {
             }
         }
         return ret;
-    }
+    }*/
 
 }

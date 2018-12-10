@@ -7,7 +7,7 @@ import java.util.Objects;
 
 /**
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
 public class SimpleEmail implements Serializable {
     

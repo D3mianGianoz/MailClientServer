@@ -21,8 +21,11 @@ public class Server extends Application {
 
         Scene scene = new Scene(root);
 
+        stage.setTitle("SERVER EMAIL");
         stage.setScene(scene);
         stage.show();
+        
+        
 
         //Se chiudo il server chiudo tutto //TODO assiucurarsi che chiuda anche il socket
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {

@@ -11,7 +11,7 @@ import model.SimpleEmail;
 
 /**
  *
- * @author Damiano
+ * @author Damiano Gianotti and Alberto Costamagna
  */
 public class EmailTask implements Runnable {
 

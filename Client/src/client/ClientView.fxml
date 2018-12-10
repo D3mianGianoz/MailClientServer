@@ -30,7 +30,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="About">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Chi Siamo ?" />
+                        <MenuItem mnemonicParsing="false" text="Chi Siamo ?" onAction="#menuChiSiamo" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Esci">

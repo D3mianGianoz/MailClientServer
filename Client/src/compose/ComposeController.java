@@ -25,7 +25,7 @@ import static util.Utility.alert;
 /**
  * FXML Controller class
  *
- * @author Damiano Gianotti Alberto Costamagna
+ * @author Damiano Gianotti and Alberto Costamagna
  */
 public class ComposeController implements Initializable {
 
@@ -53,7 +53,7 @@ public class ComposeController implements Initializable {
     void sendEmail(ActionEvent event) {
         ClientSocket socket = Client.getClsocket();
         
-        if (!socket.isClosed()) { //Non basta
+        if (!socket.isClosed()) {
             socket.sendObject("invioEmail");
             String ack = socket.readString();
             if (ack.equals("manda email")) {
@@ -65,6 +65,8 @@ public class ComposeController implements Initializable {
                     alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
                 }
             }
+            else
+                alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR);
             
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();

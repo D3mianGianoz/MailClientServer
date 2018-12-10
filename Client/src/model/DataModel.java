@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 
 /**
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  *
  * Necessaria per il Client
  */

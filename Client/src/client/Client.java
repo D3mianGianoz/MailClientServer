@@ -17,7 +17,7 @@ import model.DataModel;
 
 /**
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
 public class Client extends Application {
 

@@ -17,7 +17,7 @@ import static util.Utility.alert;
 /**
  * FXML Controller class
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
 public class LoginController implements Initializable {
 

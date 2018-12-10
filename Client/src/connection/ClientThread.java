@@ -16,14 +16,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Damiano
+ * @author Damiano Gianotti and Alberto Costamagna
  */
 public class ClientThread extends Thread {
 
     private ServerSocket serverSocket;
     private final int NUM_PORTA;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
     private final ClientController controller;
     private final String emailClient;
 

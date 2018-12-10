@@ -21,7 +21,7 @@ import static util.Utility.alertConf;
 
 /**
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
 public class ClientController implements Initializable {
 
@@ -87,6 +87,11 @@ public class ClientController implements Initializable {
     void onReplyAll(ActionEvent event) {
         Client.showComposeEmail("ReplyAll");
     }
+    
+    @FXML
+    void menuChiSiamo(ActionEvent event) {
+        alert("Sviluppato da:\n Alberto Costamagna\nDamiano Gianotti", Alert.AlertType.INFORMATION);
+    }
 
     @FXML         
     void onDelete(ActionEvent event) {
@@ -107,6 +112,7 @@ public class ClientController implements Initializable {
                 }
             } else {
                 System.out.println("Errore di comunicazione");
+                alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR);
                 return;
             }
 

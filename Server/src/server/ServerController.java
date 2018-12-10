@@ -34,15 +34,18 @@ public class ServerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lblStatus.setText("Server is not running");
+        btnStop.setDisable(true);
     }
 
     // Funzione richiamata al click del bottone Avvia
     // Inizializza il serverMail mettendo in ascolto il socket sulla porta indicata dal txtPorta
     public void startServer() {
         try {
-            server = new ServerThread(this);                           //TODO Passi sempre lo stesso server controller
+            btnAvvia.setDisable(true);
+            server = new ServerThread(this);                         
             server.start();
             lblStatus.setText("Server is running");
+            btnStop.setDisable(false);
         } catch (Exception e) {
             Logger.getLogger(ServerController.class.getName()).log(Level.SEVERE, "Non puoi ristartare un server", e);
         }
@@ -57,6 +60,8 @@ public class ServerController implements Initializable {
             Logger.getLogger(ServerController.class.getName()).log(Level.SEVERE, "Sto morendo", ex);
         }
         lblStatus.setText("Server is not running");
+        btnAvvia.setDisable(false);
+        btnStop.setDisable(true);
     }
 
     public synchronized void printLog(String log) {

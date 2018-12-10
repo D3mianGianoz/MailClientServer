@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Alberto Costamagna , Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
 public class ClientSocket {
 

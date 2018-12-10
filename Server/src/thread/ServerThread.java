@@ -7,14 +7,13 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import server.ServerController;
 
 /**
  *
- * @author Alberto Costamanga, Damiano Gianotti
+ * @author Alberto Costamagna and Damiano Gianotti
  */
+
 // Thread per inizializzare il server e aspettare le chiamate
 public class ServerThread extends Thread {
 
@@ -56,8 +55,7 @@ public class ServerThread extends Thread {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
             try {
-                if (socketList.size() < MAX_NUM_THREAD) {
-                    //Socket accepted = server.accept();
+                if (socketList.size() < MAX_NUM_THREAD) {                    
                     Thread thread = new Thread(new AcceptionTask());
                     thread.start();
                     thread.join();
@@ -70,8 +68,7 @@ public class ServerThread extends Thread {
                     controller.printLog("Raggiunto numero massimo di conessioni disponibili");
                 }
             } catch (NullPointerException ex) {
-                controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "Errore nella start del Server", ex);
+                controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());                
             } catch (InterruptedException exN) {
                 controller.printLog("Errore puntatore a null: " + exN.getMessage());
             }
@@ -82,8 +79,8 @@ public class ServerThread extends Thread {
     // TODO si blocca quando clicco sul bottone di stop, da un errore di array out of bound e altri mille errori
     public void stopServer() {
         try {
-            server.close();
             running.set(false);
+            server.close();
             stopThreads();
             controller.printLog("Server chiusto correttamente");
         } catch (IOException | NullPointerException | InterruptedException ex) {
