@@ -50,25 +50,28 @@ public class ComposeController implements Initializable {
     @FXML
     void sendEmail(ActionEvent event) {
         ClientSocket socket = Client.getClsocket();
-        
+
         if (!socket.isClosed()) {
             socket.sendObject("invioEmail");
             String ack = socket.readString();
             if (ack.equals("manda email")) {
                 SimpleEmail toSend = newEmail();
                 socket.sendObject(toSend);
-                ack = socket.readString();;
+                ack = socket.readString();
                 if (ack.equals("ack scrittura email")) {
                     System.out.println("mail inviata correttamente");
-                    alert("Email inviata correttamente", Alert.AlertType.INFORMATION, "Success" , true);
+                    alert("Email inviata correttamente", Alert.AlertType.INFORMATION, "Success", true);
+                    
+                    Node source = (Node) event.getSource();
+                    Stage stage = (Stage) source.getScene().getWindow();
+                    stage.close();
+                } else if (ack.equals("destinatario/i non validi")) {
+                    ArrayList<String> notFound = (ArrayList<String>) socket.readObject();
+                    alert("Mancanti" + notFound.toString(), Alert.AlertType.ERROR, "Destinatario/i incorretti");
                 }
+            } else {
+                alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR, "Fatal Error");
             }
-            else
-                alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR , "Fatal Error");
-            
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
         } else {
             alert("Fallito invio email, Server Offline ", Alert.AlertType.ERROR, "Fatal Error");
         }
@@ -106,7 +109,7 @@ public class ComposeController implements Initializable {
         IdnewEmail = 0xa;
 
         switch (action) {
-            
+
             case "New Email":
                 break;
 

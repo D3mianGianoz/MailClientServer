@@ -31,7 +31,7 @@ public class GestClienThread extends Thread {
     private String emailClient;
     private File clientFile;
     private final AtomicBoolean runningT = new AtomicBoolean(false);
-    
+
     //Lock per i file, shared in lettura, exclusive in scrittura
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private final Lock write = readWriteLock.writeLock();
@@ -188,35 +188,46 @@ public class GestClienThread extends Thread {
 
         // Recupero i destinatri della email
         ArrayList<String> destinatari = email.getDestinatari();
+        ArrayList<String> dstNotFound = new ArrayList<>();
 
         // Per ogni destinatario vado a scrivere la mail nel rispettivo file
         for (String dest : destinatari) {
             // Recupero la lista delle email del file
             File fileDest = new File("EmailFiles/" + dest + ".dat");
-            if (!fileDest.exists()) {
+            if (fileDest.exists()) {
+                ArrayList<SimpleEmail> prevEmail = readEmailFile(fileDest);
+                prevEmail.add(email);
+                writeFile(fileDest, prevEmail);
+                if (clientList.containsKey(dest)) {
+                    mandoEmailClient(dest, email);
+                }
+            } else {
+                dstNotFound.add(dest);
+            }
+        }
+        
+        try {
+            if (dstNotFound.isEmpty()) {
+                out.writeObject("ack scrittura email");
+                controller.printLog("Email ricevuta correttamente dal client: " + this.emailClient);
+            } else {
+                out.writeObject("destinatario/i non validi");
+                out.writeObject(dstNotFound);
+                controller.printLog("Email non inviata dal client: " + this.emailClient + "  utenti: " + dstNotFound.toString() +" non trovati");
+            }
+        } catch (IOException ex) {
+            controller.printLog("Errore risposta client" + ex.getMessage());
+        }
+    }
+
+    /*// Andava bene ma leggendo meglio la prof vuole errore
                 try {
                     fileDest.createNewFile();
                     writeFile(fileDest, new ArrayList<>());
                 } catch (IOException ex) {
                     controller.printLog("Impossibile creare nuovo file per i destinantari: " + ex.getMessage());
                 }
-            }
-            ArrayList<SimpleEmail> prevEmail = readEmailFile(fileDest);
-            prevEmail.add(email);
-            writeFile(fileDest, prevEmail);
-            if (clientList.containsKey(dest)) {
-                mandoEmailClient(dest, email);
-            }
-        }
-
-        try {
-            out.writeObject("ack scrittura email");
-            controller.printLog("Email ricevuta correttamente dal client: " + this.emailClient);
-        } catch (IOException ex) {
-            controller.printLog("Errore risposta client");
-        }
-    }
-
+     */
     private void gestisciDeleteEmail() {
         try {
             // Dico al client di inviarmi la email da eliminare
