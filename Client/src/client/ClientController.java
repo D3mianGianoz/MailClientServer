@@ -90,7 +90,7 @@ public class ClientController implements Initializable {
     
     @FXML
     void menuChiSiamo(ActionEvent event) {
-        alert("Sviluppato da:\n Alberto Costamagna\nDamiano Gianotti", Alert.AlertType.INFORMATION);
+        alert("Alberto Costamagna\nDamiano Gianotti", Alert.AlertType.INFORMATION, "Sviluppato da:\n");
     }
 
     @FXML         
@@ -105,7 +105,7 @@ public class ClientController implements Initializable {
                 CCsocket.sendObject(toSend);
                 ack = CCsocket.readString();
                 if (ack.equals("ack rimozione email")) {
-                    alert("Email rimossa correttamente", Alert.AlertType.INFORMATION, true);
+                    alert("Email rimossa correttamente", Alert.AlertType.INFORMATION,"Success",true);
                 } else {
                     alert("Delete Email fallita", Alert.AlertType.ERROR);
                     return;
@@ -184,7 +184,7 @@ public class ClientController implements Initializable {
     
     public void addEmail(Email toAdd){
         clmodel.addEmail(toAdd);
-        alert("Nuova Email per: " + this.userEmail + "!", Alert.AlertType.INFORMATION, true);
+        alert("Nuova Email per: " + this.userEmail + "!", Alert.AlertType.INFORMATION, "Nuova Email !" ,true);
         System.out.println("Email correttamente aggiunta");
     }
 

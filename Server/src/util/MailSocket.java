@@ -17,13 +17,13 @@ public class MailSocket {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public MailSocket(ServerController controller, int nPorta) {
+    public MailSocket(ServerController controller, int nPorta, String dest) {
         try {
             this.socket = new Socket("127.0.0.1", nPorta);
             this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream(socket.getInputStream());
             this.serController = controller;
-            serController.printLog("Ho aperto il MailSocket verso il client con la porta: " + nPorta);
+            serController.printLog("Ho aperto il MailSocket verso il client: " +dest+ " con la porta: " + nPorta);
         } catch (IOException ex) {
             serController.printLog("Connesione al MailSocket del client fallita: " + ex.getMessage());
         }

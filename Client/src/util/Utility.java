@@ -16,9 +16,22 @@ public class Utility {
         alert.showAndWait();
     }
 
+    public static void alert(String messaggio, Alert.AlertType type, String header) {
+        Alert alert = new Alert(type, messaggio);
+        alert.setHeaderText(header);
+        alert.showAndWait();
+    }
+
     public static void alert(String messaggio, Alert.AlertType type, boolean NoWait) {
         Alert alert = new Alert(type, messaggio);
         alert.setTitle("Notifica");
+        alert.show();
+    }
+
+    public static void alert(String messaggio, Alert.AlertType type, String header, boolean NoWait) {
+        Alert alert = new Alert(type, messaggio);
+        alert.setTitle("Notifica");
+        alert.setHeaderText(header);
         alert.show();
     }
 

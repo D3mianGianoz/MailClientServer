@@ -15,7 +15,7 @@ import javafx.scene.control.Button;
 import static util.Utility.alert;
 
 /**
- * FXML Controller class
+ * Login Controller class
  *
  * @author Alberto Costamagna and Damiano Gianotti
  */

@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,18 +60,17 @@ public class ComposeController implements Initializable {
                 ack = socket.readString();;
                 if (ack.equals("ack scrittura email")) {
                     System.out.println("mail inviata correttamente");
-                    alert("Email inviata correttamente", Alert.AlertType.INFORMATION, true);
+                    alert("Email inviata correttamente", Alert.AlertType.INFORMATION, "Success" , true);
                 }
             }
             else
-                alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR);
+                alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR , "Fatal Error");
             
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();
             stage.close();
-
         } else {
-            alert("Fallito invio email, Server Offline ", Alert.AlertType.ERROR);
+            alert("Fallito invio email, Server Offline ", Alert.AlertType.ERROR, "Fatal Error");
         }
     }
 
@@ -105,14 +102,14 @@ public class ComposeController implements Initializable {
         this.cmpModel = model;
         selectedEmail = cmpModel.getCurrentEmail();
 
-        if (selectedEmail != null || !action.equals("New Email")) {
-            Logger.getLogger(Client.class
-                    .getName()).log(Level.FINE, "Email selezionata \n{0}\n{1}", new Object[]{selectedEmail.getMittente(), action});
-        }
         accountName = Client.getUserEmail();
-        IdnewEmail = 10;
+        IdnewEmail = 0xa;
 
         switch (action) {
+            
+            case "New Email":
+                break;
+
             case "Reply":
                 txtDestinatarioNw.setText(selectedEmail.getMittente() + ";");
                 txtOggettoNw.setText("Re: " + selectedEmail.getOggetto());

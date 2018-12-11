@@ -8,11 +8,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import model.SimpleEmail;
 import server.ServerController;
 import static thread.ServerThread.clientList;
@@ -32,9 +31,12 @@ public class GestClienThread extends Thread {
     private String emailClient;
     private File clientFile;
     private final AtomicBoolean runningT = new AtomicBoolean(false);
+    
+    //Lock per i file, shared in lettura, exclusive in scrittura
+    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final Lock write = readWriteLock.writeLock();
+    private final Lock read = readWriteLock.readLock();
 
-    // Mappa dei client connessi in quel momento
-    // Invio la mail tramite il socket solo ai client connessi, altrimento scrivo solo sul loro file
     public GestClienThread(Socket r, ServerController c) {
         super("ThreadGestioneClient");
         this.clientFile = null;
@@ -56,9 +58,9 @@ public class GestClienThread extends Thread {
 
     @Override
     public void run() {
-        
+
         while (runningT.get()) {
-            
+
             String richiesta = "";
             try {
                 richiesta = (String) in.readObject();  //Operazione bloccante
@@ -102,7 +104,13 @@ public class GestClienThread extends Thread {
 
     }
 
-    
+    public String getEmailFromSocket() {
+        return this.emailClient;
+    }
+
+    public void serverExit() { // Forse inutile
+        runningT.set(false);
+    }
 
     private void gestsciLogin() {
         // Scrivo al client che accetto la sua richiesta di login
@@ -132,7 +140,7 @@ public class GestClienThread extends Thread {
                 // Creo il file per il client
                 clientFile.createNewFile();
                 // Scrivo un' arraylist di email vuoto 
-                writeFile(clientFile, new ArrayList<SimpleEmail>());
+                writeFile(clientFile, new ArrayList<>());
             } catch (IOException ex) {
                 controller.printLog("Errore nella creazione del file per le email dell' utente");
             }
@@ -149,126 +157,6 @@ public class GestClienThread extends Thread {
         controller.printLog("Client " + this.emailClient + " connesso");
 
     }
-    
-    private void gestisciDeleteEmail() {
-        try {
-            // Dico al client di inviarmi la email da eliminare
-            out.writeObject("rimuovi email");
-        } catch (IOException ex) {
-            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
-        }
-        SimpleEmail deleteEmail = null;
-        try {
-            deleteEmail = (SimpleEmail) in.readObject();
-        } catch (IOException ex) {
-            controller.printLog("Impossibile ricevere la email da cancellare: " + ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            controller.printLog(ex.getMessage());
-        }
-
-        // Recupero la lista delle email del client stesso
-        ArrayList<SimpleEmail> el = readEmailFile(this.clientFile);
-        el.remove(deleteEmail); 
-
-        // Dopo aver tolto la email riscrivo il file con la nuova lista
-        writeFile(this.clientFile, el);
-
-        try {
-            out.writeObject("ack rimozione email");
-            controller.printLog("Email del client: " + this.emailClient + " cancellata correttamente");
-        } catch (IOException ex) {
-            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
-        }
-    }
-
-    private void writeFile(File f, ArrayList<SimpleEmail> el) {
-        FileChannel fch = null;
-        ObjectOutputStream o = null;
-        FileOutputStream fo = null;
-        //FileLock lock = null;
-
-        try {
-            try {
-                fo = new FileOutputStream(f);
-            } catch (FileNotFoundException ex) {
-                controller.printLog("File per la scrittura non trovato: " + ex.getMessage());
-            }
-
-            try {
-                o = new ObjectOutputStream(fo);
-            } catch (IOException ex) {
-                controller.printLog("Impossibile creare ObjectOutputStream: " + ex.getMessage());
-            }
-
-            /* Acquisisco il lock esclusivo per il file; da problemi
-            try {
-                fch = FileChannel.open(f.toPath(), StandardOpenOption.WRITE, StandardOpenOption.APPEND);
-                lock = fch.lock();
-            } catch (IOException ex) {
-                controller.printLog("Impossibile acquisire il lock del file per la scrittura");
-            }
-             */
-            try {
-                o.writeObject(el);
-            } catch (IOException ex) {
-                controller.printLog("Impossibile scrivere sul file: " + ex.getMessage());
-            }
-        } finally {
-            try {
-                o.close();
-                fo.close();
-                //fch.close();
-            } catch (IOException | NullPointerException ex) {
-                controller.printLog("Impossibile chiudere output stream: " + ex.getMessage());
-            }
-        }
-    }
-
-    private ArrayList<SimpleEmail> readEmailFile(File f) {
-        FileChannel fch = null;
-        FileInputStream fi = null;
-        ObjectInputStream oi = null;
-        ArrayList<SimpleEmail> ret = null;
-
-        try {
-            try {
-                fi = new FileInputStream(f);
-            } catch (FileNotFoundException ex) {
-                controller.printLog("Errore nell' apertura del file da leggere: " + ex.getMessage());
-            }
-
-            try {
-                oi = new ObjectInputStream(fi);
-            } catch (IOException ex) {
-                controller.printLog("Errore nell' apertura dell' object input stream: " + ex.getMessage());
-            }
-
-            try {
-                fch = FileChannel.open(f.toPath(), StandardOpenOption.READ);
-                FileLock lock = fch.lock(0, fch.size(), true);
-            } catch (IOException ex) {
-                controller.printLog("Errore nell' acquisizione del shared lock per la lettura del file: " + ex.getMessage());
-            }
-
-            try {
-                ret = (ArrayList<SimpleEmail>) oi.readObject();
-            } catch (IOException ex) {
-                controller.printLog("Errore nella lettura del file: " + ex.getMessage());
-            } catch (ClassNotFoundException ex) {
-                controller.printLog(ex.getMessage());
-            }
-        } finally { //Ho un dubbio sull' ordine 
-            try {
-                oi.close();
-                fi.close();
-                fch.close();
-            } catch (IOException | NullPointerException ex) {
-                controller.printLog("Errore chiusura ObjectInputStream: " + ex.getMessage());
-            }
-        }
-
-        return ret;
-    }
 
     private void getMyEmails() {
 
@@ -278,7 +166,6 @@ public class GestClienThread extends Thread {
         } catch (IOException ex) {
             controller.printLog("Impossibile inviare lista email al client: " + ex.getMessage());
         }
-
     }
 
     private void gestisciInvioEmail() {
@@ -330,12 +217,35 @@ public class GestClienThread extends Thread {
         }
     }
 
-    private void gestisciLogout() {
-        socketList.remove(this);
-        if (clientList.containsKey(this.emailClient)) {
-            clientList.remove(this.emailClient);
+    private void gestisciDeleteEmail() {
+        try {
+            // Dico al client di inviarmi la email da eliminare
+            out.writeObject("rimuovi email");
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
         }
-        controller.printLog("Client: " + this.emailClient + " gestito correttamente, disconesso");
+        SimpleEmail deleteEmail = null;
+        try {
+            deleteEmail = (SimpleEmail) in.readObject();
+        } catch (IOException ex) {
+            controller.printLog("Impossibile ricevere la email da cancellare: " + ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            controller.printLog(ex.getMessage());
+        }
+
+        // Recupero la lista delle email del client stesso
+        ArrayList<SimpleEmail> el = readEmailFile(this.clientFile);
+        el.remove(deleteEmail);
+
+        // Dopo aver tolto la email riscrivo il file con la nuova lista
+        writeFile(this.clientFile, el);
+
+        try {
+            out.writeObject("ack rimozione email");
+            controller.printLog("Email del client: " + this.emailClient + " cancellata correttamente");
+        } catch (IOException ex) {
+            controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
+        }
     }
 
     private void gestisciAggiuntaPorta() {
@@ -352,19 +262,103 @@ public class GestClienThread extends Thread {
         }
     }
 
-    public String getEmailFromSocket() {
-        return this.emailClient;
+    private void gestisciLogout() {
+        socketList.remove(this);
+        if (clientList.containsKey(this.emailClient)) {
+            clientList.remove(this.emailClient);
+        }
+        controller.printLog("Client: " + this.emailClient + " gestito correttamente, disconesso");
     }
-    
-    public void serverExit(){
-        runningT.set(false);
+
+    private void writeFile(File f, ArrayList<SimpleEmail> el) {
+        ObjectOutputStream o = null;
+        FileOutputStream fo = null;
+
+        try {
+            try {
+                fo = new FileOutputStream(f);
+            } catch (FileNotFoundException ex) {
+                controller.printLog("File per la scrittura non trovato: " + ex.getMessage());
+            }
+
+            try {
+                o = new ObjectOutputStream(fo);
+            } catch (IOException ex) {
+                controller.printLog("Impossibile creare ObjectOutputStream: " + ex.getMessage());
+            }
+
+            // Acquisisco il lock esclusivo per il file
+            try {
+                write.lock();
+            } catch (Exception ex) {
+                controller.printLog("Impossibile acquisire il lock del file per la scrittura");
+            }
+
+            try {
+                o.writeObject(el);
+            } catch (IOException ex) {
+                controller.printLog("Impossibile scrivere sul file: " + ex.getMessage());
+            }
+        } finally {
+            try {
+                o.close();
+                fo.close();
+                write.unlock();
+            } catch (IOException | NullPointerException ex) {
+                controller.printLog("Impossibile chiudere output stream: " + ex.getMessage());
+            }
+        }
+    }
+
+    private ArrayList<SimpleEmail> readEmailFile(File f) {
+        FileInputStream fi = null;
+        ObjectInputStream oi = null;
+        ArrayList<SimpleEmail> ret = null;
+
+        try {
+            try {
+                fi = new FileInputStream(f);
+            } catch (FileNotFoundException ex) {
+                controller.printLog("Errore nell' apertura del file da leggere: " + ex.getMessage());
+            }
+
+            try {
+                oi = new ObjectInputStream(fi);
+            } catch (IOException ex) {
+                controller.printLog("Errore nell' apertura dell' object input stream: " + ex.getMessage());
+            }
+
+            try {
+                read.lock();
+            } catch (Exception ex) {
+                controller.printLog("Errore nell' acquisizione del shared lock per la lettura del file: " + ex.getMessage());
+            }
+
+            try {
+                ret = (ArrayList<SimpleEmail>) oi.readObject();
+            } catch (IOException ex) {
+                controller.printLog("Errore nella lettura del file: " + ex.getMessage());
+            } catch (ClassNotFoundException ex) {
+                controller.printLog(ex.getMessage());
+            }
+        } finally { //Ho un dubbio sull' ordine 
+            try {
+                oi.close();
+                fi.close();
+                read.unlock();
+            } catch (IOException | NullPointerException ex) {
+                controller.printLog("Errore chiusura ObjectInputStream: " + ex.getMessage());
+            }
+        }
+
+        return ret;
     }
 
     private void mandoEmailClient(String dest, SimpleEmail email) {
-        
+
         int nPorta = clientList.get(dest);
-        MailSocket mailsocket = new MailSocket(controller, nPorta);
-        
+        MailSocket mailsocket = new MailSocket(controller, nPorta, dest);
+
         mailsocket.sendString("pushEmail");
         String ack = mailsocket.readString();
         if (ack.equals("ACK push")) {
@@ -380,16 +374,5 @@ public class GestClienThread extends Thread {
         }
         mailsocket.cls();
     }
-    
-    /*
-    private String getDestinatari(ArrayList<String> dest) {
-        String ret = dest.get(0);
-        if (dest.size() > 1) {
-            for (int i = 1; i < dest.size(); i++) {
-                ret = ret + ";" + dest.get(i);
-            }
-        }
-        return ret;
-    }*/
 
 }
