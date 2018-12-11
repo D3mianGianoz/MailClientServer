@@ -14,16 +14,6 @@
             <Font size="36.0" />
          </font>
       </Label>
-      <Label layoutX="14.0" layoutY="90.0" text="Inserire Porta">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <TextField fx:id="txtPorta" layoutX="131.0" layoutY="88.0" prefHeight="25.0" prefWidth="92.0">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </TextField>
       <Button fx:id="btnAvvia" layoutX="341.0" layoutY="71.0" mnemonicParsing="false" onAction="#startServer" prefHeight="59.0" prefWidth="144.0" text="AVVIA">
          <font>
             <Font size="16.0" />

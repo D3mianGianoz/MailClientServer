@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="176.0" prefWidth="323.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="login.LoginController">
+    <children>
+        <Button fx:id="btnLogin" layoutX="134.0" layoutY="118.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#handleLogin" prefHeight="35.0" prefWidth="60.0" text="Login" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="130.0" />
+      <TextField fx:id="txtMail" alignment="CENTER" layoutX="44.0" layoutY="71.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="235.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+      <Label alignment="CENTER" layoutX="63.0" layoutY="27.0" text="Inserisci il tuo indirizzo e-mail" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="62.0" AnchorPane.topAnchor="27.0" />
+    </children>
+</AnchorPane>
