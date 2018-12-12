@@ -15,7 +15,7 @@ import javafx.collections.ObservableList;
  *
  * @author Alberto Costamagna and Damiano Gianotti
  *
- * Client
+ * Client Email
  */
 public final class Email {
 
@@ -68,11 +68,6 @@ public final class Email {
         return result;
     }
 
-    /*
-    public ObjectProperty<LocalDate> dataProperty() {
-        return data;
-    }
-     */
     //Destinatari
     private final ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<>());
 

@@ -42,13 +42,11 @@ public class GestClienThread extends Thread {
         this.clientFile = null;
         this.socket = r;
         this.controller = c;
-        runningT.set(true);
         try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
         }
-
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
@@ -58,6 +56,8 @@ public class GestClienThread extends Thread {
 
     @Override
     public void run() {
+
+        runningT.set(true);
 
         while (runningT.get()) {
 
@@ -106,10 +106,6 @@ public class GestClienThread extends Thread {
 
     public String getEmailFromSocket() {
         return this.emailClient;
-    }
-
-    public void serverExit() { // Forse inutile
-        runningT.set(false);
     }
 
     private void gestsciLogin() {
@@ -205,7 +201,7 @@ public class GestClienThread extends Thread {
                 dstNotFound.add(dest);
             }
         }
-        
+
         try {
             if (dstNotFound.isEmpty()) {
                 out.writeObject("ack scrittura email");
@@ -213,21 +209,13 @@ public class GestClienThread extends Thread {
             } else {
                 out.writeObject("destinatario/i non validi");
                 out.writeObject(dstNotFound);
-                controller.printLog("Email non inviata dal client: " + this.emailClient + "  utenti: " + dstNotFound.toString() +" non trovati");
+                controller.printLog("Email non inviata dal client: " + this.emailClient + "  utenti: " + dstNotFound.toString() + " non trovati");
             }
         } catch (IOException ex) {
             controller.printLog("Errore risposta client" + ex.getMessage());
         }
     }
 
-    /*// Andava bene ma leggendo meglio la prof vuole errore
-                try {
-                    fileDest.createNewFile();
-                    writeFile(fileDest, new ArrayList<>());
-                } catch (IOException ex) {
-                    controller.printLog("Impossibile creare nuovo file per i destinantari: " + ex.getMessage());
-                }
-     */
     private void gestisciDeleteEmail() {
         try {
             // Dico al client di inviarmi la email da eliminare
