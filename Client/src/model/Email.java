@@ -15,7 +15,7 @@ import javafx.collections.ObservableList;
  *
  * @author Alberto Costamagna and Damiano Gianotti
  *
- * Client
+ * Classe per effettuare il binding dinamico tra i valori dell' email e i campi in cui verrà visualizzata
  */
 public final class Email {
 
@@ -68,12 +68,7 @@ public final class Email {
         return result;
     }
 
-    /*
-    public ObjectProperty<LocalDate> dataProperty() {
-        return data;
-    }
-     */
-    //Destinatari
+ 
     private final ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<>());
 
     public ObservableList<String> getDestinatariList() {
@@ -103,7 +98,7 @@ public final class Email {
         return new SimpleStringProperty(getDestinatari());
     }
 
-    //Oggetto
+  
     private final StringProperty oggetto = new SimpleStringProperty();
 
     public String getOggetto() {
@@ -118,7 +113,7 @@ public final class Email {
         return oggetto;
     }
 
-    //Testo
+    
     private final StringProperty testo = new SimpleStringProperty();
 
     public String getTesto() {

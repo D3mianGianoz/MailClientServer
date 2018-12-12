@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- *
+ * Caricamento dell' interfaccia grafica
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class Server extends Application {

@@ -40,6 +40,9 @@ public class Client extends Application {
         Client.clSocket = clsocket;
     }
 
+    /**
+     * Metodo per la visualizzazione dell'interfaccia grafica
+     */
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
@@ -58,6 +61,9 @@ public class Client extends Application {
         });
     }
 
+    /**
+     * Metoto per visualizzare la schermata di login
+     */
     protected static void showLoginView() {
         primaryStage.setTitle("Effetua il Login! ");
         FXMLLoader loader = new FXMLLoader();
@@ -72,6 +78,10 @@ public class Client extends Application {
         primaryStage.show();
     }
 
+    
+    /**
+     * Metoto per visualizzare la schermata di visualizzazione delle email
+     */
     public static void showEmailClient(String email) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("ClientView.fxml"));
@@ -79,21 +89,16 @@ public class Client extends Application {
         AnchorPane ClientPane;
         try {
             ClientPane = loader.load();
-
-            //Prendo il controller
+            
             ClientController controller = loader.getController();
-
-            //Creo il DataModel e lo salvo locamente
+            
             coreModel = new DataModel();
 
-            //Provo caricare i dati dal server
+            
             coreModel.loadData(clSocket);
-            //Logger.getLogger(Client.class.getName()).log(Level.FINE, "Carico il data Model con queste Email", coreModel.toString());
-
-            //mi salvo l'email del client
+            
             userEmail = email;
 
-            //faccio partire il controller
             controller.initModel(coreModel);
 
             Scene sceneEm = new Scene(ClientPane);
@@ -104,6 +109,10 @@ public class Client extends Application {
         }
     }
 
+    
+    /**
+     * Metoto per visualizzare la schermata di composizione delle nuove email da inviare
+     */
     public static void showComposeEmail(String onAction) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("/compose/newEmail.fxml"));

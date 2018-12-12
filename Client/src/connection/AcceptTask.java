@@ -41,6 +41,9 @@ public class AcceptTask implements Runnable {
         }
     }
 
+    /**
+     * Metodo che è rimane in ascolto per far sì che il server possa inviare in tempo reale le email ai destinatari connessi
+     */
     private void listenAndTask() {
 
         String request = "";
@@ -60,6 +63,9 @@ public class AcceptTask implements Runnable {
         }
     }
 
+    /**
+     * Ricevuta la nuova email la salva nella rispettivo data model
+     */
     private void addNewEmail() {
         try {
             out.writeObject("ACK push");

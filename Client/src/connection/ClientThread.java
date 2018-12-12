@@ -7,15 +7,13 @@ package connection;
 
 import client.ClientController;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Thread per l' inizializzazione del socket per la ricezione delle email da parte del server
  * @author Damiano Gianotti and Alberto Costamagna
  */
 public class ClientThread extends Thread {

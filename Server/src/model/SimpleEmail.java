@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- *
+ * Oggetto email inviabile tramite socket
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class SimpleEmail implements Serializable {

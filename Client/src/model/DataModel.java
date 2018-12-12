@@ -11,7 +11,7 @@ import javafx.collections.ObservableList;
  *
  * @author Alberto Costamagna and Damiano Gianotti
  *
- * Necessaria per il Client
+ * Classe utilizzata per il salvataggio in locale della lista delle email del client e per il binding tra quest' ultima e l' interfaccia grafica
  */
 public class DataModel {
 

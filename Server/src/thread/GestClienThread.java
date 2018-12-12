@@ -56,6 +56,9 @@ public class GestClienThread extends Thread {
         }
     }
 
+    /**
+     * Metodo per la gestione delle richieste da parte del client
+     */
     @Override
     public void run() {
 
@@ -108,41 +111,42 @@ public class GestClienThread extends Thread {
         return this.emailClient;
     }
 
-    public void serverExit() { // Forse inutile
+    public void serverExit() {
         runningT.set(false);
     }
 
+    
+    /**
+     * Metodo per la gestione della richiesta di login da parte del client
+     * Per prima cosa mi comunica la sua email, se l' utente non esiste creo un nuovo file in cui salvare le sue email
+     * Dopo di che comico l' avvenuto login al client
+     */
     private void gestsciLogin() {
-        // Scrivo al client che accetto la sua richiesta di login
+        
         controller.printLog("Sto gestendo la richiesta di login da parte del client");
 
-        try {
-            // Comunico al client di mandarmi la sua email
+        try {            
             out.writeObject("ACK login");
             out.flush();
         } catch (IOException ex) {
             controller.printLog("Impossibile mandare ACK al client");
         }
 
-        try {
-            // Leggo la email del client di login
+        try {            
             this.emailClient = (String) in.readObject();
         } catch (IOException ex) {
             controller.printLog("Impossibile leggere email di login del client" + ex.getMessage());
         } catch (ClassNotFoundException ex) {
             controller.printLog(ex.getMessage());
         }
-
-        // Controllo se la mail del client è nuova o il suo file con le email precedenti esiste
+        
         clientFile = new File("EmailFiles/" + emailClient + ".dat");
         if (!clientFile.exists()) {
-            try {
-                // Creo il file per il client
+            try {        
                 clientFile.createNewFile();
-                // Scrivo un' arraylist di email vuoto 
                 writeFile(clientFile, new ArrayList<>());
             } catch (IOException ex) {
-                controller.printLog("Errore nella creazione del file per le email dell' utente");
+                controller.printLog("Errore nella creazione del file per le email dell' utente "+ex.getMessage());
             }
             controller.printLog("File per l'utente: " + this.emailClient + " creato correttamente");
         }
@@ -158,6 +162,9 @@ public class GestClienThread extends Thread {
 
     }
 
+    /**
+     * Metodo che ritorna al client cha ha fatto richiesta la sua lista delle email ricevute
+     */
     private void getMyEmails() {
 
         ArrayList<SimpleEmail> ret = readEmailFile(this.clientFile);
@@ -168,8 +175,13 @@ public class GestClienThread extends Thread {
         }
     }
 
+    /**
+     * Metodo per la gestione dell' invio di una email da parte di un client ad un/altri client
+     * Vado a scrivere la email sul file corrispondente del/dei destinartio/i e se sono connessi in quel momento gli mando in tempo reale la email
+     * Se inoltre la email che voglio inviare contiene un destinatario che non esiste, lo cominco con un errore
+     */
     private void gestisciInvioEmail() {
-        // Comunico al client di mandarmi la mail
+        
         try {
             out.writeObject("manda email");
         } catch (IOException ex) {
@@ -177,22 +189,20 @@ public class GestClienThread extends Thread {
         }
 
         SimpleEmail email = null;
-        try {
-            // Aspetto che il client mi invio la sua simple email
+        try {            
             email = (SimpleEmail) in.readObject();
         } catch (IOException ex) {
-            controller.printLog("Errore impossibile ricevere email");
+            controller.printLog("Errore impossibile ricevere email "+ex.getMessage());
         } catch (ClassNotFoundException ex) {
             controller.printLog(ex.getMessage());
         }
 
-        // Recupero i destinatri della email
+        
         ArrayList<String> destinatari = email.getDestinatari();
         ArrayList<String> dstNotFound = new ArrayList<>();
 
-        // Per ogni destinatario vado a scrivere la mail nel rispettivo file
-        for (String dest : destinatari) {
-            // Recupero la lista delle email del file
+        
+        for (String dest : destinatari) {            
             File fileDest = new File("EmailFiles/" + dest + ".dat");
             if (fileDest.exists()) {
                 ArrayList<SimpleEmail> prevEmail = readEmailFile(fileDest);
@@ -220,17 +230,14 @@ public class GestClienThread extends Thread {
         }
     }
 
-    /*// Andava bene ma leggendo meglio la prof vuole errore
-                try {
-                    fileDest.createNewFile();
-                    writeFile(fileDest, new ArrayList<>());
-                } catch (IOException ex) {
-                    controller.printLog("Impossibile creare nuovo file per i destinantari: " + ex.getMessage());
-                }
+    
+    /**
+     * Metodo per la cancellazione delle email 
+     * Il client cominica al server quale email vuole eliminare
+     * Il server recupera l' arraylist dal file dell' utente, elimina l' email desiderata e poi riscrive la lista sul file corrispondente
      */
     private void gestisciDeleteEmail() {
-        try {
-            // Dico al client di inviarmi la email da eliminare
+        try {         
             out.writeObject("rimuovi email");
         } catch (IOException ex) {
             controller.printLog("Errore impossibile inviare messaggio di risposta al client: " + ex.getMessage());
@@ -243,12 +250,10 @@ public class GestClienThread extends Thread {
         } catch (ClassNotFoundException ex) {
             controller.printLog(ex.getMessage());
         }
-
-        // Recupero la lista delle email del client stesso
+        
         ArrayList<SimpleEmail> el = readEmailFile(this.clientFile);
         el.remove(deleteEmail);
-
-        // Dopo aver tolto la email riscrivo il file con la nuova lista
+        
         writeFile(this.clientFile, el);
 
         try {
@@ -259,6 +264,9 @@ public class GestClienThread extends Thread {
         }
     }
 
+    /**
+     * Metodo per la mappatura delle porte dei client connessi in tempo reale al server per l'invio istantaneo delle email ricevute
+     */
     private void gestisciAggiuntaPorta() {
         try {
             out.writeObject("aggiungi porta");
@@ -273,6 +281,10 @@ public class GestClienThread extends Thread {
         }
     }
 
+    /**
+     * Metodo per gestire la richiesta di logout da parte di un client.
+     * Va rimuovere ogni suo riferimento dalla lista dei client connessi e dalla hashmap 
+     */
     private void gestisciLogout() {
         socketList.remove(this);
         if (clientList.containsKey(this.emailClient)) {
@@ -281,6 +293,9 @@ public class GestClienThread extends Thread {
         controller.printLog("Client: " + this.emailClient + " gestito correttamente, disconesso");
     }
 
+    /**
+     * Metodo per la scrittura dei file contenenti le email dei client
+     */
     private void writeFile(File f, ArrayList<SimpleEmail> el) {
         ObjectOutputStream o = null;
         FileOutputStream fo = null;
@@ -298,7 +313,7 @@ public class GestClienThread extends Thread {
                 controller.printLog("Impossibile creare ObjectOutputStream: " + ex.getMessage());
             }
 
-            // Acquisisco il lock esclusivo per il file
+            
             try {
                 write.lock();
             } catch (Exception ex) {
@@ -321,6 +336,9 @@ public class GestClienThread extends Thread {
         }
     }
 
+    /**
+     * Metodo per la lettura dei file delle email dei client
+     */
     private ArrayList<SimpleEmail> readEmailFile(File f) {
         FileInputStream fi = null;
         ObjectInputStream oi = null;
@@ -352,7 +370,7 @@ public class GestClienThread extends Thread {
             } catch (ClassNotFoundException ex) {
                 controller.printLog(ex.getMessage());
             }
-        } finally { //Ho un dubbio sull' ordine 
+        } finally { 
             try {
                 oi.close();
                 fi.close();
@@ -365,6 +383,11 @@ public class GestClienThread extends Thread {
         return ret;
     }
 
+    /**
+     * Metodo per l' invio in tempo reale delle email ai client corrispondenti
+     * Dopo che il server si recuera la porta su cui il client destinatario ascolta,
+     * invia la email e aspetta il risponso del client
+     */
     private void mandoEmailClient(String dest, SimpleEmail email) {
 
         int nPorta = clientList.get(dest);

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- *
+ * Oggetto email inviabile tramite socket
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class SimpleEmail implements Serializable {

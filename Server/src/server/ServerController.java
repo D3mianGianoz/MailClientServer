@@ -31,14 +31,20 @@ public class ServerController implements Initializable {
     @FXML
     private TextArea txtLog;
 
+    /**
+     * Metodo richiamato in automatico all' inizializzazione dell' interfaccia grafica
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lblStatus.setText("Server is not running");
         btnStop.setDisable(true);
     }
 
-    // Funzione richiamata al click del bottone Avvia
-    // Inizializza il serverMail mettendo in ascolto il socket sulla porta indicata dal txtPorta
+    
+    /** 
+     * Funzione richiamata al click del bottone Avvia
+     * Inizializza il serverMail mettendo in ascolto il socket sulla porta indicata dal txtPorta
+    */ 
     public void startServer() {
         try {
             btnAvvia.setDisable(true);
@@ -51,6 +57,10 @@ public class ServerController implements Initializable {
         }
     }
 
+    /**
+     * Funzione richiamata al click del bottone stop.
+     * Va a bloccare il serer aspettando che termini il suo thread
+     */
     public void stopServer() {
         this.printLog("Stopping server...");
         server.stopServer();
