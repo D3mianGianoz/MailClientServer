@@ -13,7 +13,6 @@ import server.ServerController;
  *  Thread per inizializzare il server e aspettare le chiamate
  * @author Alberto Costamagna and Damiano Gianotti
  */
-
 public class ServerThread extends Thread {
 
     private final int NUM_PORTA = 8070;
@@ -58,11 +57,11 @@ public class ServerThread extends Thread {
             // Avvio un nuovo thread per gestire la richiesta dell' utente
             // e lo aggiungo alla lista di client
             try {
-                if (socketList.size() < MAX_NUM_THREAD) {                    
+                if (socketList.size() < MAX_NUM_THREAD) {
                     Thread thread = new Thread(new AcceptionTask());
                     thread.start();
                     thread.join();
-                    if (accepted != null) {
+                    if (accepted != null && !server.isClosed()) {
                         GestClienThread client = new GestClienThread(accepted, controller);
                         socketList.add(client);
                         client.start();
@@ -71,7 +70,7 @@ public class ServerThread extends Thread {
                     controller.printLog("Raggiunto numero massimo di conessioni disponibili");
                 }
             } catch (NullPointerException ex) {
-                controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());                
+                controller.printLog("Errore nella ricezione della richiesta di un client: " + ex.getMessage());
             } catch (InterruptedException exN) {
                 controller.printLog("Errore puntatore a null: " + exN.getMessage());
             }
@@ -86,23 +85,9 @@ public class ServerThread extends Thread {
         try {
             running.set(false);
             server.close();
-            stopThreads();
             controller.printLog("Server chiusto correttamente");
-        } catch (IOException | NullPointerException | InterruptedException ex) {
+        } catch (IOException | NullPointerException ex) {
             controller.printLog("Errore nella chiusura del server sulla porta: " + NUM_PORTA + ". " + ex.getMessage());
-        }
-    }
-    
-    
-    /**
-     * Metodo per fermare i singoli thread di gestione dei client ancora connessi al server nel momento dello stop
-     */
-    public void stopThreads() throws InterruptedException {
-        for (GestClienThread th : socketList) {
-            System.out.println(th.getName() +" prima è: "+ th.isAlive());
-            th.serverExit();
-            th.join(5);
-            System.out.println(th.getName() +" è al momento: "+ th.isAlive());
         }
     }
 
@@ -117,7 +102,8 @@ public class ServerThread extends Thread {
                 controller.printLog("Aspetto una connessione ...");
                 accepted = server.accept();
             } catch (SocketException e) {
-                controller.printLog("Connesione chiusa");
+                if (server.isClosed())
+                    controller.printLog("Connesione chiusa");
             } catch (IOException ex) {
                 controller.printLog("Accept fallita" + ex.getMessage());
             }

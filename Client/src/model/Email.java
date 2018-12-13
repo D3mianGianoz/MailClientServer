@@ -68,7 +68,7 @@ public final class Email {
         return result;
     }
 
- 
+
     private final ObservableList<String> destinatari = FXCollections.observableArrayList(new ArrayList<>());
 
     public ObservableList<String> getDestinatariList() {

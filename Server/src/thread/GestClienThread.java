@@ -42,13 +42,11 @@ public class GestClienThread extends Thread {
         this.clientFile = null;
         this.socket = r;
         this.controller = c;
-        runningT.set(true);
         try {
             in = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
             controller.printLog("Errore nella creazione dell' input stream " + ex.getMessage());
         }
-
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
@@ -61,6 +59,8 @@ public class GestClienThread extends Thread {
      */
     @Override
     public void run() {
+
+        runningT.set(true);
 
         while (runningT.get()) {
 
@@ -111,11 +111,7 @@ public class GestClienThread extends Thread {
         return this.emailClient;
     }
 
-    public void serverExit() {
-        runningT.set(false);
-    }
 
-    
     /**
      * Metodo per la gestione della richiesta di login da parte del client
      * Per prima cosa mi comunica la sua email, se l' utente non esiste creo un nuovo file in cui salvare le sue email
@@ -215,7 +211,7 @@ public class GestClienThread extends Thread {
                 dstNotFound.add(dest);
             }
         }
-        
+
         try {
             if (dstNotFound.isEmpty()) {
                 out.writeObject("ack scrittura email");
@@ -223,19 +219,20 @@ public class GestClienThread extends Thread {
             } else {
                 out.writeObject("destinatario/i non validi");
                 out.writeObject(dstNotFound);
-                controller.printLog("Email non inviata dal client: " + this.emailClient + "  utenti: " + dstNotFound.toString() +" non trovati");
+                controller.printLog("Email non inviata dal client: " + this.emailClient + "  utenti: " + dstNotFound.toString() + " non trovati");
             }
         } catch (IOException ex) {
             controller.printLog("Errore risposta client" + ex.getMessage());
         }
     }
-
-    
+  
+  
     /**
      * Metodo per la cancellazione delle email 
      * Il client cominica al server quale email vuole eliminare
      * Il server recupera l' arraylist dal file dell' utente, elimina l' email desiderata e poi riscrive la lista sul file corrispondente
      */
+
     private void gestisciDeleteEmail() {
         try {         
             out.writeObject("rimuovi email");
