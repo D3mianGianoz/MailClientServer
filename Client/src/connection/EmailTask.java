@@ -10,7 +10,7 @@ import model.Email;
 import model.SimpleEmail;
 
 /**
- *
+ * Salva la email nel data model
  * @author Damiano Gianotti and Alberto Costamagna
  */
 public class EmailTask implements Runnable {

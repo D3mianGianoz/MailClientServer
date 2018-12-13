@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Classe utilizzata per la comincazione tra client e server
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class ClientSocket {

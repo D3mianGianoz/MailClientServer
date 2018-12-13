@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 /**
- *
+ * Classe per la gestione di vari tipi di messaggi per la comincazione con l' utenete
  * @author Damiano Gianotti and Alberto Costamagna
  */
 public class Utility {

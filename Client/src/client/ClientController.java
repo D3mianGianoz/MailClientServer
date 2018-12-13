@@ -93,6 +93,11 @@ public class ClientController implements Initializable {
         alert("Alberto Costamagna\nDamiano Gianotti", Alert.AlertType.INFORMATION, "Sviluppato da:\n");
     }
 
+    /**
+     * Metodo richiamato quando un utente vuole eliminare una email.
+     * Il client recupera la email selezionata, la comunica al server che la elimina dal file
+     * e poi aggiorna il propio data model locale
+     */
     @FXML         
     void onDelete(ActionEvent event) {
         if (alertConf("Sei sicuro di volere cancellare l'email ?", Alert.AlertType.CONFIRMATION)) {
@@ -127,8 +132,11 @@ public class ClientController implements Initializable {
         //
     }
 
+    /**
+     * Inizializzazione del data model e del binding dei campi
+     */
     public void initModel(DataModel model) {
-        //mi assicuro che il modello venga impostato una volta soltanto
+        
         if (this.clmodel != null) {
             throw new IllegalStateException("Il Model può essere iniziallato una volta sola");
         }
@@ -141,16 +149,19 @@ public class ClientController implements Initializable {
         CCsocket = Client.getClsocket();
         this.userEmail = Client.getUserEmail();
 
-        //Binding Lista
+        
         bindingListW();
 
-        //Binding dei campi Email
+        
         bindingFields();
 
-        //creo il Thread per le nuove Email
+        
         listenerNewEmails();
     }
 
+    /**
+     * Metodo per la crezione del thread che gestira le email in arrivo dal server
+     */
     private void listenerNewEmails() {
         ClientThread cThread = new ClientThread(0, this, this.userEmail);
         int portaVariabile = cThread.getPortaClient();
@@ -161,6 +172,9 @@ public class ClientController implements Initializable {
         }
     }
 
+    /**
+     * Metodo per la comunicazione al server della porta sui cui il client sta ascoltando
+     */
     private boolean sendPortaUser(int porta) {
         CCsocket.sendObject("aggiungiPorta");
         String ack = CCsocket.readString();
@@ -182,12 +196,19 @@ public class ClientController implements Initializable {
         return false;
     }
     
+    
+    /**
+     * Aggiunta della nuova email al data model
+     */
     public void addEmail(Email toAdd){
         clmodel.addEmail(toAdd);
         alert("Nuova Email per: " + this.userEmail + "!", Alert.AlertType.INFORMATION, "Nuova Email !" ,true);
         System.out.println("Email correttamente aggiunta");
     }
 
+    /**
+     * Binding della lista della email alla listview
+     */
     private void bindingListW() {
 
         lwEmail.setItems(clmodel.getEmailList());
@@ -212,6 +233,9 @@ public class ClientController implements Initializable {
 
     }
 
+    /**
+     * Binding dei valori della email nei rispettivi campi per la visulizzazione 
+     */
     private void bindingFields() {
 
         clmodel.getCurrentEmailProperty().addListener(new ChangeListener<Email>() {

@@ -28,6 +28,12 @@ public class LoginController implements Initializable {
     @FXML
     private Button btnLogin;
 
+    
+    /**
+     * Metodo per la gestione dell' evento click del bottone login
+     * Il client si mette in comunicazione con il server per effettuare il login
+     * Se riceve la risposta corretta dal server allora si andrà a mostrare la schermata contenente tutte le email ricevute
+     */
     @FXML
     private void handleLogin(ActionEvent event) {
         clsocketLogin = new ClientSocket();

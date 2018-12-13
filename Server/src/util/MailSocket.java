@@ -7,7 +7,7 @@ import java.net.Socket;
 import server.ServerController;
 
 /**
- *
+ * Classe per la gestione e l' invio  in tempo reale delle email tra client connessi contemporaneamente al server
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class MailSocket {

@@ -10,10 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import server.ServerController;
 
 /**
- *
+ *  Thread per inizializzare il server e aspettare le chiamate
  * @author Alberto Costamagna and Damiano Gianotti
  */
-// Thread per inizializzare il server e aspettare le chiamate
 public class ServerThread extends Thread {
 
     private final int NUM_PORTA = 8070;
@@ -32,12 +31,16 @@ public class ServerThread extends Thread {
         clientList = new HashMap<>(MAX_NUM_THREAD);
     }
 
-    // Metodo richiamato una volta startato il thread
+    
     @Override
     public void run() {
         startServer();
     }
 
+    /**
+     * Metodo che inzializza il socket del server aspettando le connessione dei vari client.
+     * Una volta che un client si è connesso il server fa partire un thread che va a gestire quella specifica connessione
+     */
     private void startServer() {
         try {
             controller.printLog("Inizializzazione del server...");
@@ -75,7 +78,9 @@ public class ServerThread extends Thread {
 
     }
 
-    // TODO si blocca quando clicco sul bottone di stop
+    /**
+     * Metodo per fermare il server 
+     */
     public void stopServer() {
         try {
             running.set(false);
@@ -86,6 +91,9 @@ public class ServerThread extends Thread {
         }
     }
 
+    /**
+     * Thread per l' accettazione di nuove connessioni da parte dei client
+     */
     private class AcceptionTask implements Runnable {
 
         @Override

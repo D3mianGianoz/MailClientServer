@@ -47,6 +47,10 @@ public class ComposeController implements Initializable {
     }
 //</editor-fold>
 
+    /**
+     * Metodo richiamato al click del bottone send
+     * Cominica al server una SimplEmail con i valori indicati nei campi di input
+     */
     @FXML
     void sendEmail(ActionEvent event) {
         ClientSocket socket = Client.getClsocket();
@@ -77,6 +81,9 @@ public class ComposeController implements Initializable {
         }
     }
 
+    /**
+     * Metodo per tornare alla schermata precedente
+     */
     @FXML
     void goBackHome(ActionEvent event) {
         Node source = (Node) event.getSource();
@@ -97,6 +104,10 @@ public class ComposeController implements Initializable {
         assert txtDestinatarioNw != null : "fx:id=\"txtDestinatario\" was not injected: check your FXML file 'newEmail.fxml'.";
     }
 
+    /**
+     * Essendo questa schermata richiamata da piu pulsanti con diverse funzionalità
+     * questo metodo va a controllare quale bottone l' ha richiamata e si adatta di conseguenza
+     */
     public void initModel(DataModel model, String action) {
         if (this.cmpModel != null) {
             throw new IllegalStateException("Il Model può essere iniziallato una volta sola");
@@ -132,6 +143,9 @@ public class ComposeController implements Initializable {
         }
     }
 
+    /**
+     * Metodo che va a recuperare i valori dei campi di input
+     */
     private SimpleEmail newEmail() {
         String mittente = accountName;
         String dstUniti = txtDestinatarioNw.getText();
