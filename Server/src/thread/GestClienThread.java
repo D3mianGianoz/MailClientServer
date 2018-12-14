@@ -56,6 +56,8 @@ public class GestClienThread extends Thread {
 
     /**
      * Metodo per la gestione delle richieste da parte del client
+     * Controllo che tipo di richiesta ha fatto il client e agisco di conseguenza
+     * In caso di "exit" esco, blocco il ciclo infinito e mi rimuvo dalla lista
      */
     @Override
     public void run() {
@@ -73,8 +75,6 @@ public class GestClienThread extends Thread {
                 controller.printLog("Class not found " + ex.getMessage());
             }
 
-            //controller.printLog("Lettura stringa del client: "+ richiesta);
-            // Controllo che tipo di richiesta ha fatto il client
             switch (richiesta) {
                 case "login":
                     gestsciLogin();
@@ -96,8 +96,6 @@ public class GestClienThread extends Thread {
                     gestisciAggiuntaPorta();
                     break;
 
-                // Esco e blocco il ciclo infinito e mi rimuvo dalla lista
-                // test con atomicBoolean, forse meglio del return
                 case "exit":
                     gestisciLogout();
                     runningT.set(false);
@@ -193,10 +191,8 @@ public class GestClienThread extends Thread {
             controller.printLog(ex.getMessage());
         }
 
-        
         ArrayList<String> destinatari = email.getDestinatari();
         ArrayList<String> dstNotFound = new ArrayList<>();
-
         
         for (String dest : destinatari) {            
             File fileDest = new File("EmailFiles/" + dest + ".dat");
@@ -284,6 +280,7 @@ public class GestClienThread extends Thread {
      */
     private void gestisciLogout() {
         socketList.remove(this);
+        
         if (clientList.containsKey(this.emailClient)) {
             clientList.remove(this.emailClient);
         }

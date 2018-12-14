@@ -17,7 +17,7 @@ public class Server extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("ServerView.fxml"));
 
         Scene scene = new Scene(root);
 
@@ -25,8 +25,6 @@ public class Server extends Application {
         stage.setScene(scene);
         stage.show();
         
-        
-
         //Se chiudo il server chiudo tutto //TODO assiucurarsi che chiuda anche il socket
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

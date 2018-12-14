@@ -10,6 +10,7 @@ import model.Email;
 import model.SimpleEmail;
 
 /**
+ * Semplice Runnable
  * Salva la email nel data model
  * @author Damiano Gianotti and Alberto Costamagna
  */

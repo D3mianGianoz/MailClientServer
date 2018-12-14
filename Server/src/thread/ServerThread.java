@@ -10,7 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import server.ServerController;
 
 /**
- *  Thread per inizializzare il server e aspettare le chiamate
+ * Thread per inizializzare il server e aspettare le chiamate
+ *
  * @author Alberto Costamagna and Damiano Gianotti
  */
 public class ServerThread extends Thread {
@@ -31,15 +32,16 @@ public class ServerThread extends Thread {
         clientList = new HashMap<>(MAX_NUM_THREAD);
     }
 
-    
     @Override
     public void run() {
         startServer();
     }
 
     /**
-     * Metodo che inzializza il socket del server aspettando le connessione dei vari client.
-     * Una volta che un client si è connesso il server fa partire un thread che va a gestire quella specifica connessione
+     * Metodo che inzializza il socket del server aspettando le connessione dei
+     * vari client. Una volta che un client si è connesso il server fa partire
+     * un thread che va a gestire quella specifica connessione il thread viene
+     * aggiunto alla lista
      */
     private void startServer() {
         try {
@@ -52,10 +54,8 @@ public class ServerThread extends Thread {
         }
         controller.printLog("Server inizializzato correttamente sulla porta: " + NUM_PORTA);
 
-        // Inizio ad ascoltare per le richieste del client
         while (running.get()) {
-            // Avvio un nuovo thread per gestire la richiesta dell' utente
-            // e lo aggiungo alla lista di client
+
             try {
                 if (socketList.size() < MAX_NUM_THREAD) {
                     Thread thread = new Thread(new AcceptionTask());
@@ -79,7 +79,7 @@ public class ServerThread extends Thread {
     }
 
     /**
-     * Metodo per fermare il server 
+     * Metodo per fermare il server
      */
     public void stopServer() {
         try {
@@ -102,8 +102,9 @@ public class ServerThread extends Thread {
                 controller.printLog("Aspetto una connessione ...");
                 accepted = server.accept();
             } catch (SocketException e) {
-                if (server.isClosed())
+                if (server.isClosed()) {
                     controller.printLog("Connesione chiusa");
+                }
             } catch (IOException ex) {
                 controller.printLog("Accept fallita" + ex.getMessage());
             }

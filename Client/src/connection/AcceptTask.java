@@ -11,7 +11,8 @@ import javafx.application.Platform;
 import model.SimpleEmail;
 
 /**
- *
+ * Semplice Task per pushare le Email in realtime
+ * 
  * @author Damiano Gianotti and Alberto Costamagna
  */
 public class AcceptTask implements Runnable {
@@ -42,7 +43,7 @@ public class AcceptTask implements Runnable {
     }
 
     /**
-     * Metodo che è rimane in ascolto per far sì che il server possa inviare in tempo reale le email ai destinatari connessi
+     * Metodo che ascolta sul socket per far sì che il server possa inviare in tempo reale le email ai destinatari connessi
      */
     private void listenAndTask() {
 
@@ -59,12 +60,14 @@ public class AcceptTask implements Runnable {
                 break;
                         
             default:
+                Logger.getLogger(ClientThread.class.getName()).log(Level.INFO, "Stringa di richiesta non gestita");
                 break;
         }
     }
 
     /**
      * Ricevuta la nuova email la salva nella rispettivo data model
+     * Uso il metodo runLater per fare partire lo specifico Runnable sul il Thread JavaFX Application 
      */
     private void addNewEmail() {
         try {
@@ -79,9 +82,6 @@ public class AcceptTask implements Runnable {
 
             EmailTask task = new EmailTask(this.cont, email);
             Platform.runLater(task);
-            //Thread t = new Thread(task);
-            //t.start();
-
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Errore nella ricezione dell' Email", ex);
         }

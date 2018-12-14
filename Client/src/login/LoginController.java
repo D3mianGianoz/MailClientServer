@@ -32,21 +32,19 @@ public class LoginController implements Initializable {
     /**
      * Metodo per la gestione dell' evento click del bottone login
      * Il client si mette in comunicazione con il server per effettuare il login
-     * Se riceve la risposta corretta dal server allora si andrà a mostrare la schermata contenente tutte le email ricevute
+     * Se riceve la risposta corretta dal server allora si andrà a mostrare la schermata contenente tutte le email ricevute 
+     * e si setta il socket di comunicazione con il server
      */
     @FXML
     private void handleLogin(ActionEvent event) {
         clsocketLogin = new ClientSocket();
+        
         try {
-            // Cominico al server la richiesta login
             clsocketLogin.sendObject("login");
-
-            //Aspetto l'ack da parte del server
             String ret = (String) clsocketLogin.readObject();
 
             if (ret.equals("ACK login")) {
                 System.out.println(ret);
-                // Mando la mail al server
                 String loginMail = txtMail.getText();
                 clsocketLogin.sendObject(loginMail);
 
@@ -54,7 +52,6 @@ public class LoginController implements Initializable {
                 if (ack.equals("ACK email login")) {
                     alert("Login effettuato", Alert.AlertType.INFORMATION);
 
-                    //setto il socket
                     Client.setClsocket(clsocketLogin);
                     Client.showEmailClient(loginMail);
                 } else {
@@ -64,7 +61,6 @@ public class LoginController implements Initializable {
                 System.out.println("Errore nella risposta del login al server");
             }
         } catch (NullPointerException ex) {
-            //Gestione Login Fallito
             Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, "Gestione Login non riuscita", ex.getMessage());
             alert("Login Fallito, Riprovare", Alert.AlertType.ERROR);
         }

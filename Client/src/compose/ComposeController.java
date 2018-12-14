@@ -58,11 +58,14 @@ public class ComposeController implements Initializable {
         if (!socket.isClosed()) {
             socket.sendObject("invioEmail");
             String ack = socket.readString();
+            
             if (ack.equals("manda email")) {
                 SimpleEmail toSend = newEmail();
                 socket.sendObject(toSend);
                 ack = socket.readString();
+                
                 if (ack.equals("ack scrittura email")) {
+                    
                     System.out.println("mail inviata correttamente");
                     alert("Email inviata correttamente", Alert.AlertType.INFORMATION, "Success", true);
                     
@@ -71,7 +74,7 @@ public class ComposeController implements Initializable {
                     stage.close();
                 } else if (ack.equals("destinatario/i non validi")) {
                     ArrayList<String> notFound = (ArrayList<String>) socket.readObject();
-                    alert("Mancanti" + notFound.toString(), Alert.AlertType.ERROR, "Destinatario/i incorretti");
+                    alert("Mancanti: " + notFound.toString(), Alert.AlertType.ERROR, "Destinatario/i incorretti");
                 }
             } else {
                 alert("Errore di comunicazione.\n Il server potrebbe essere spento", Alert.AlertType.ERROR, "Fatal Error");
@@ -82,7 +85,7 @@ public class ComposeController implements Initializable {
     }
 
     /**
-     * Metodo per tornare alla schermata precedente
+     * Metodo per tornare alla schermata del Client e chiudere lo stage corrente
      */
     @FXML
     void goBackHome(ActionEvent event) {
@@ -107,6 +110,8 @@ public class ComposeController implements Initializable {
     /**
      * Essendo questa schermata richiamata da piu pulsanti con diverse funzionalità
      * questo metodo va a controllare quale bottone l' ha richiamata e si adatta di conseguenza
+     * @param model DataModel da utilizzare
+     * @param action azione da eseguire
      */
     public void initModel(DataModel model, String action) {
         if (this.cmpModel != null) {

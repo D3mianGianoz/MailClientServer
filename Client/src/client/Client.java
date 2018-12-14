@@ -25,6 +25,7 @@ public class Client extends Application {
     private static Stage secondaryStage;
     private static AnchorPane mainLayout;
     private static ClientSocket clSocket;
+    private static ClientController CController;
     private static DataModel coreModel;
     private static String userEmail;
 
@@ -40,21 +41,34 @@ public class Client extends Application {
         Client.clSocket = clsocket;
     }
 
+
     /**
-     * Metodo per la visualizzazione dell'interfaccia grafica
+     * Metodo di start per la visualizzazione dell'interfaccia grafica Inoltre
+     * se chiudo lo stage principale chiamo il metodo cls() per la terminazione
+     * del Thread GestClient e Platform.exit() per chiudere tutti gli eventuali
+     * stage aperti
+     *
+     * @param stage
+     * @throws java.lang.Exception
      */
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         showLoginView();
 
-        //Se chiudo il client chiudo tutto anche il socket
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 if (clSocket != null) {
                     clSocket.cls();
+                    System.out.println("Socket chiuso nel client");
                 }
+                
+                if (CController != null) {
+                    CController.getcThread().exit();
+                    System.out.println("Thread di sync chiuso nel client");
+                }
+
                 Platform.exit();
                 System.exit(0);
             }
@@ -78,9 +92,12 @@ public class Client extends Application {
         primaryStage.show();
     }
 
-    
     /**
-     * Metoto per visualizzare la schermata di visualizzazione delle email
+     * Metoto per creare e caricare la schermata di visualizzazione delle email,
+     * la pagina principale del Client Prendo il controller collegato e
+     * iniziallizo il controller con lo un nuovo model
+     *
+     * @param email email identificativa del client
      */
     public static void showEmailClient(String email) {
         FXMLLoader loader = new FXMLLoader();
@@ -89,17 +106,14 @@ public class Client extends Application {
         AnchorPane ClientPane;
         try {
             ClientPane = loader.load();
-            
-            ClientController controller = loader.getController();
+
+            CController = loader.getController();
             
             coreModel = new DataModel();
 
-            
-            coreModel.loadData(clSocket);
-            
             userEmail = email;
 
-            controller.initModel(coreModel);
+            CController.initModel(coreModel);
 
             Scene sceneEm = new Scene(ClientPane);
             primaryStage.setTitle("Client Email di " + userEmail);
@@ -109,9 +123,12 @@ public class Client extends Application {
         }
     }
 
-    
     /**
-     * Metoto per visualizzare la schermata di composizione delle nuove email da inviare
+     * Metoto per visualizzare la schermata di composizione delle nuove email da
+     * inviare Prendo il controller collegato e iniziallizo il controller con lo
+     * stesso model
+     * 
+     * @param onAction azione da eseguire
      */
     public static void showComposeEmail(String onAction) {
         FXMLLoader loader = new FXMLLoader();
@@ -120,9 +137,8 @@ public class Client extends Application {
         try {
             ClientPane = loader.load();
 
-            //Prendo il controller
             ComposeController cmpController = loader.getController();
-            //iniziallizo il controller
+
             cmpController.initModel(coreModel, onAction);
 
             Scene sceneEm = new Scene(ClientPane);
