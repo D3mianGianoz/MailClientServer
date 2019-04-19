@@ -1,2 +1,2 @@
 # MailClientServer
-Simple e-mail client server written in Java and Js 
+Simple e-mail client server written in Java
